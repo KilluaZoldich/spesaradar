@@ -113,3 +113,5 @@ Campione visivo: 50 prodotti, 28 dalla campagna attuale (pagine 2, 4, 16, 18) e 
 - Il servizio script `cdn.ipaper.io`, collegato dal lettore, restituisce 403 al percorso protetto di acquisizione. Nessuna elusione; non vengono inventati URL di download PDF. La seconda sede citata nel volantino non è automaticamente abilitata.
 
 Fonti social: nessuna nuova integrazione. I collegamenti ufficiali a Coop/Interspar in UI sono dichiarazioni di copertura e verifica della sede; **non contano come cataloghi funzionanti**.
+
+Verifica dal runner GitHub successiva al push: anche le tre sedi Conad completano la raccolta con 100 offerte ciascuna, 4 richieste e circa 27–29 secondi. Nessun proxy, browser o OCR. Stato parziale invariato. [Evidenza del deploy](carpi-deployment.json).

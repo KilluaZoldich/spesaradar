@@ -5,9 +5,7 @@
       "/Users/metin/Projects/spesaradar/apps/web/node_modules/.bin/playwright",
       "test",
       "--config",
-      "playwright.pages.config.ts",
-      "--grep",
-      "Carpi|Pages live"
+      "playwright.pages.config.ts"
     ],
     "configFile": "/Users/metin/Projects/spesaradar/apps/web/playwright.pages.config.ts",
     "rootDir": "/Users/metin/Projects/spesaradar/tests/pages",
@@ -90,12 +88,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 956,
+                  "duration": 1485,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T08:33:51.776Z",
+                  "startTime": "2026-09-08T08:38:51.856Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -124,12 +122,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 526,
+                  "duration": 574,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T08:33:52.969Z",
+                  "startTime": "2026-09-08T08:38:53.587Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -158,12 +156,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1254,
+                  "duration": 1391,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T08:33:53.500Z",
+                  "startTime": "2026-09-08T08:38:54.167Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -174,6 +172,40 @@
           "id": "30aa42b97d8966d0c2dc-f27d4e3b8163738aaddf",
           "file": "catalog.spec.ts",
           "line": 84,
+          "column": 5
+        },
+        {
+          "title": "Pages: nuova sede MD, carta e passaggio rapido alle offerte future",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1419,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T08:38:55.564Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "30aa42b97d8966d0c2dc-38695fac0365cdb5cca0",
+          "file": "catalog.spec.ts",
+          "line": 109,
           "column": 5
         },
         {
@@ -192,12 +224,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1872,
+                  "duration": 1899,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T08:33:54.761Z",
+                  "startTime": "2026-09-08T08:38:56.988Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -215,9 +247,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-08T08:33:51.394Z",
-    "duration": 5270.848,
-    "expected": 4,
+    "startTime": "2026-09-08T08:38:51.526Z",
+    "duration": 7395.723,
+    "expected": 5,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
