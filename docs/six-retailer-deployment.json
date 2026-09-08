@@ -1,0 +1,141 @@
+{
+  "run_id": 34213224269,
+  "run_url": "https://github.com/KilluaZoldich/spesaradar/actions/runs/34213224269",
+  "code_commit": "8b1dc6f5fc09cf407c4d8b6454f89f4caeba83d0",
+  "site": "https://killuazoldich.github.io/spesaradar/?cap=41012",
+  "snapshot_time": "2026-09-08T10:03:18.759949+00:00",
+  "source_counts": {
+    "famila-carpi": 130,
+    "lidl-national": 232,
+    "eurospin-national": 218,
+    "conad-000386": 100,
+    "conad-000350": 100,
+    "despar-819": 175,
+    "md-151": 105,
+    "conad-010088": 100
+  },
+  "source_states": [
+    {
+      "source_id": "eurospin-national",
+      "name": "Eurospin",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T06:38:29.460086+00:00",
+      "last_success_at": "2026-09-08T06:38:33.512129+00:00",
+      "completeness": "partial",
+      "count": null
+    },
+    {
+      "source_id": "conad-000350",
+      "name": "Conad",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T08:35:55.024386+00:00",
+      "last_success_at": "2026-09-08T08:36:24.291883+00:00",
+      "completeness": "partial",
+      "count": null
+    },
+    {
+      "source_id": "lidl-national",
+      "name": "Lidl",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T06:38:33.558181+00:00",
+      "last_success_at": "2026-09-08T06:39:55.046270+00:00",
+      "completeness": "partial",
+      "count": null
+    },
+    {
+      "source_id": "conad-000386",
+      "name": "Conad",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T08:36:24.307464+00:00",
+      "last_success_at": "2026-09-08T08:36:51.644465+00:00",
+      "completeness": "partial",
+      "count": null
+    },
+    {
+      "source_id": "despar-819",
+      "name": "Despar / Interspar",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T10:01:51.914762+00:00",
+      "last_success_at": "2026-09-08T10:03:06.129766+00:00",
+      "completeness": "partial",
+      "count": 175
+    },
+    {
+      "source_id": "famila-carpi",
+      "name": "Famila",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T10:03:06.141419+00:00",
+      "last_success_at": "2026-09-08T10:03:18.749150+00:00",
+      "completeness": "partial",
+      "count": 130
+    },
+    {
+      "source_id": "md-151",
+      "name": "MD",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T07:41:22.907439+00:00",
+      "last_success_at": "2026-09-08T07:41:35.501848+00:00",
+      "completeness": "partial",
+      "count": null
+    },
+    {
+      "source_id": "conad-010088",
+      "name": "Conad",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T08:36:51.658305+00:00",
+      "last_success_at": "2026-09-08T08:37:19.161572+00:00",
+      "completeness": "partial",
+      "count": null
+    }
+  ],
+  "compared_new_offers": 305,
+  "missing_compared_ids": [],
+  "additional_ids": [],
+  "field_differences": [],
+  "remote_jobs": [
+    {
+      "run_id": "9153ce98818f4b6586d1d91edb10c40c",
+      "job_id": "9153ce98818f4b6586d1d91edb10c40c",
+      "source_id": "despar-819",
+      "scope": "despar-819",
+      "stage": "finished",
+      "outcome": "partial",
+      "duration_seconds": 74.22,
+      "requests": 25
+    },
+    {
+      "run_id": "dc8b93cc428f44ba953d5b97b5251a3c",
+      "job_id": "dc8b93cc428f44ba953d5b97b5251a3c",
+      "source_id": "famila-carpi",
+      "scope": "famila-carpi",
+      "stage": "finished",
+      "outcome": "partial",
+      "duration_seconds": 12.62,
+      "requests": 4
+    }
+  ]
+}
