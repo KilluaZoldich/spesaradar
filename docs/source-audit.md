@@ -70,4 +70,6 @@ Il nuovo incarico di ampliare la copertura ha aperto un secondo ciclo, **limitat
 - DPiù: https://www.d-piu.com/ , https://www.d-piu.com/robots.txt , https://online.d-piu.com/robots.txt . Relazione col catalogo online verificata dal link “PRENOTA&RITIRA”; accesso al secondo dominio non validato per errore di catena certificati, senza disattivare controlli. Non esaminati singoli prodotti o tutte le condizioni del servizio.
 - Todis: https://www.todis.it/ e https://www.todis.it/robots.txt . Homepage collega volantini per Baia Domizia/Sessa Aurunca e articoli prenotabili; questi ultimi comprendono mobili ed elettronica. Nessuna generalizzazione a un feed alimentare nazionale; sedi, prezzi promozionali alimentari e condizioni non verificati fino al record finale.
 
-Lo stato dei social rimane invariato. Le capture aggiuntive di sviluppo sono private ed eliminate alla chiusura della verifica; rimangono metadati minimi e le capture del worker soggette alla retention ordinaria.
+Lo stato dei social rimane invariato. Le capture aggiuntive di sviluppo e della verifica isolata sono state eliminate alla chiusura; rimangono metadati minimi. Le capture dell’installazione locale ordinaria seguono la retention del worker.
+
+La successiva esecuzione GitHub Actions ha confermato il medesimo risultato MD: 105 offerte, 7 richieste, 12,61 secondi, esito parziale. [Verifica remota](expansion-deployment.json). Questo conferma l’accessibilità al momento della prova, senza estendere la copertura ad altre sedi.

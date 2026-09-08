@@ -120,3 +120,9 @@ Browser integrato temporaneamente indisponibile perché il Mac era bloccato e lo
 | Schede e accessibilità | Prezzo carta verificato e visibile, dettaglio/focus conservati; Axe senza violazioni automatiche nei percorsi verificati, non certificazione WCAG |
 
 Evidenze: [selezione mobile](selection-expanded-mobile.png), [MD mobile](md-mobile.png), [scheda MD](md-offer.png), [desktop Pages](pages-desktop.png). Nessuna immagine del prodotto inventata o riutilizzata. Restano i limiti sulle condizioni non integralmente estraibili, sui social, sui buoni e sulla copertura descritti nell’audit.
+
+### Esito pubblico dell’ampliamento
+
+[Workflow 34200562089](https://github.com/KilluaZoldich/spesaradar/actions/runs/34200562089) riuscito sul commit `0e37350`. MD raccolto direttamente dal runner GitHub: **105 offerte, 7 richieste, 12,61 s**, stato `partial`. Lidl ed Eurospin hanno riusato la cache valida senza ulteriori crawl. Snapshot pubblico delle 09:41:35 Europe/Rome: **555 offerte** (232 Lidl, 218 Eurospin, 105 MD), comprese le promozioni future; nessuna capture privata pubblicata.
+
+`PAGES_TEST_URL=https://killuazoldich.github.io/spesaradar/ npm --prefix apps/web run test:pages`: **4 passati in 5,3 s** sull’URL HTTPS, inclusi MD, carta, ricerca sede, preferenze, passaggio alle future, dettaglio, Axe e layout mobile. I 105 record MD pubblici corrispondono alla verifica locale per identità, prezzo, formato, condizioni, ambito, date, categoria e tag. [Evidenza di pubblicazione](expansion-deployment.json), [report browser remoto](pages-e2e-results.json). Eliminati anche i file grezzi dello scouting e le capture della verifica MD isolata; la retention ordinaria del worker locale rimane invariata.

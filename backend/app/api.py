@@ -116,7 +116,7 @@ UNSUPPORTED = [
         "id": "dpiu",
         "name": "DPiù",
         "support_status": "candidate",
-        "message": "Catalogo non ancora verificato; accesso TLS da risolvere.",
+        "message": "Offerte non ancora verificate per un negozio o un ambito preciso.",
     },
     {
         "id": "todis",

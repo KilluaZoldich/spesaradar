@@ -1,0 +1,77 @@
+{
+  "verified_at": "2026-09-08T07:44:14.725564+00:00",
+  "url": "https://killuazoldich.github.io/spesaradar/",
+  "run": "https://github.com/KilluaZoldich/spesaradar/actions/runs/34200562089",
+  "commit": "0e37350e922c0a0379f7b605c4a75cdffe6d8cc1",
+  "generated_at": "2026-09-08T07:41:35.524289+00:00",
+  "records": 555,
+  "by_retailer": {
+    "lidl": 232,
+    "eurospin": 218,
+    "md": 105
+  },
+  "sources": [
+    {
+      "source_id": "eurospin-national",
+      "name": "Eurospin",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T06:38:29.460086+00:00",
+      "last_success_at": "2026-09-08T06:38:33.512129+00:00",
+      "completeness": "partial",
+      "count": null
+    },
+    {
+      "source_id": "lidl-national",
+      "name": "Lidl",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T06:38:33.558181+00:00",
+      "last_success_at": "2026-09-08T06:39:55.046270+00:00",
+      "completeness": "partial",
+      "count": null
+    },
+    {
+      "source_id": "md-151",
+      "name": "MD",
+      "state": "partial",
+      "stage": null,
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "support_status": "partial",
+      "last_attempt_at": "2026-09-08T07:41:22.907439+00:00",
+      "last_success_at": "2026-09-08T07:41:35.501848+00:00",
+      "completeness": "partial",
+      "count": 105
+    }
+  ],
+  "md_collect": {
+    "requests": 7,
+    "duration_seconds": "12.61",
+    "outcome": "partial",
+    "runner": "ubuntu-24.04"
+  },
+  "local_remote_comparison": {
+    "records": 105,
+    "fields": [
+      "title",
+      "brand",
+      "price",
+      "package",
+      "conditions",
+      "scope",
+      "validity",
+      "category_id",
+      "tags"
+    ],
+    "result": "identical"
+  },
+  "backend_tests": 125,
+  "frontend_tests": 14,
+  "local_browser_tests": 9,
+  "remote_browser_tests": 4,
+  "raw_captures_published": false
+}

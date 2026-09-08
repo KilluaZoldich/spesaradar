@@ -593,7 +593,9 @@ export default function App() {
                         <span className="target-availability">
                           {t.availability.current > 0
                             ? `${t.availability.current} oggi`
-                            : "Nessuna offerta oggi"}
+                            : t.availability.future > 0
+                              ? "Nessuna offerta oggi"
+                              : "Nessuna offerta raccolta di recente"}
                           {t.availability.future > 0
                             ? ` · ${t.availability.future} in arrivo`
                             : ""}
