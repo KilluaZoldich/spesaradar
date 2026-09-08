@@ -16,7 +16,14 @@ import {
   ChevronDown,
 } from "lucide-react";
 import CategoryNavigation, { shortCategory } from "./CategoryNavigation";
-import { api, ApiError, readPreferences, savePreferences } from "./api";
+import {
+  api,
+  ApiError,
+  readPreferences,
+  savePreferences,
+  STATIC_CATALOG,
+  reloadPublishedCatalog,
+} from "./api";
 import type { Target, Offer, Catalog, SourceState } from "./types";
 import OfferCard, {
   Conditions,
@@ -243,12 +250,23 @@ export default function App() {
       });
     return () => controller.abort();
   }, [view, selectionKey]);
-  async function refresh(ids = selected) {
+  async function refresh(ids = selected, userRequested = false) {
     if (!ids.length) return;
     const key = ids.slice().sort().join(",");
     setRefreshing(true);
     setError("");
     try {
+      if (STATIC_CATALOG) {
+        await reloadPublishedCatalog();
+        if (currentKey.current === key) {
+          setTick((x) => x + 1);
+          if (userRequested)
+            setNotice(
+              "Ultima pubblicazione caricata. La raccolta delle fonti avviene ogni 12 ore circa, con possibili ritardi.",
+            );
+        }
+        return;
+      }
       const r = await api<{ id: string; targets: { disposition: string }[] }>(
         "/refreshes",
         {
@@ -399,7 +417,7 @@ export default function App() {
       <header className="app-header">
         <a
           className="wordmark"
-          href="/"
+          href={import.meta.env.BASE_URL}
           aria-label="SpesaRadar, pagina iniziale"
         >
           <span>
@@ -410,6 +428,12 @@ export default function App() {
         <span className="private-label">La tua spesa, più chiara.</span>
       </header>
       <main className="app-main" id="contenuto" tabIndex={-1}>
+        {STATIC_CATALOG && (
+          <p className="publication-note">
+            Versione online · Offerte aggiornate periodicamente. Raccolta
+            programmata due volte al giorno, con possibili ritardi.
+          </p>
+        )}
         {offline && (
           <div className="banner warning" role="status">
             <WifiOff size={18} /> Sei offline. La verifica delle offerte
@@ -562,9 +586,18 @@ export default function App() {
                 </button>
                 <button
                   className="icon-button"
-                  aria-label="Aggiorna offerte"
+                  aria-label={
+                    STATIC_CATALOG
+                      ? "Controlla aggiornamenti"
+                      : "Aggiorna offerte"
+                  }
+                  title={
+                    STATIC_CATALOG
+                      ? "Controlla l’ultima pubblicazione"
+                      : "Aggiorna offerte"
+                  }
                   disabled={busy || offline}
-                  onClick={() => refresh()}
+                  onClick={() => refresh(selected, true)}
                 >
                   <RefreshCw size={18} className={busy ? "rotating" : ""} />
                 </button>

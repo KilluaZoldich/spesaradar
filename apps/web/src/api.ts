@@ -1,11 +1,13 @@
-export class ApiError extends Error {
-  code: string;
-  constructor(code: string, message: string) {
-    super(message);
-    this.code = code;
-  }
-}
+import {
+  staticApi,
+  reloadSnapshot,
+  CatalogError as ApiError,
+} from "./staticCatalog";
+export { CatalogError as ApiError } from "./staticCatalog";
+export const STATIC_CATALOG = import.meta.env.VITE_STATIC_CATALOG === "true";
+export const reloadPublishedCatalog = reloadSnapshot;
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
+  if (STATIC_CATALOG) return staticApi<T>(path, init);
   const response = await fetch("/api/v1" + path, init);
   const data = await response.json();
   if (!response.ok)

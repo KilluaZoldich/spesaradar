@@ -4,6 +4,10 @@ Le offerte dei tuoi supermercati, già divise per categoria. Web app locale in i
 
 **Rilascio 0.1 parziale.** Sono funzionanti due connettori reali, **Lidl Italia** ed **Eurospin**, per cataloghi nazionali. L’adesione del singolo negozio non è verificata. Copertura selettiva, condizioni non sempre integralmente disponibili, social e buoni generici non acquisiti. Nessun dato inventato viene inserito nel catalogo live. Vedi [audit delle fonti](docs/source-audit.md) e [verifica](docs/verification.md).
 
+## Versione online
+
+[Apri SpesaRadar su GitHub Pages](https://killuazoldich.github.io/spesaradar/). Il catalogo viene raccolto periodicamente da GitHub Actions; ricerca, filtri e dettaglio funzionano da remoto. Il pulsante di aggiornamento controlla l’ultima pubblicazione, senza avviare una raccolta immediata. [Funzionamento, gratuità e limiti](docs/pages.md).
+
 ## Avvio con Docker
 
 Prerequisiti: Docker Engine/Desktop attivo e Docker Compose v2, rete Internet per immagini e fonti. Nessuna API key. Dalla cartella del progetto:

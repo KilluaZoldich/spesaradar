@@ -1362,3 +1362,12 @@ footer button {
   line-height: 1.5;
   flex-basis: 100%;
 }
+
+.publication-note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 10px 0;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
