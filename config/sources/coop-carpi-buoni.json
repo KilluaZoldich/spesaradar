@@ -1,0 +1,35 @@
+{
+  "source_id": "coop-carpi-buoni",
+  "retailer_id": "coop",
+  "name": "Coop Alleanza 3.0",
+  "source_type": "html",
+  "parser_version": "1",
+  "allowed_domains": [
+    "www.coopalleanza3-0.it"
+  ],
+  "entry_urls": [
+    "https://www.coopalleanza3-0.it/fare-spesa/elenco-negozi/dettaglio-negozio/3967-ipercoop-il-borgogioioso.html"
+  ],
+  "audit_status": "partial",
+  "enabled": true,
+  "scope_type": "store",
+  "scope_label": "Ipercoop Il Borgogioioso · Carpi 41012 · Via dell’Industria, 31",
+  "capabilities": [
+    "coupons",
+    "store_scope"
+  ],
+  "max_requests": 5,
+  "min_interval_seconds": 3,
+  "deadline_seconds": 180,
+  "refresh_seconds": 43200,
+  "cooldown_seconds": 1800,
+  "suspend_on": [
+    403,
+    401,
+    429
+  ],
+  "timeout_seconds": 30,
+  "connector": "coop_vouchers",
+  "store_id": "9012",
+  "campaign_title_suffix": null
+}

@@ -8,7 +8,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from typing import Literal
 from zoneinfo import ZoneInfo
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 ROME = ZoneInfo("Europe/Rome")
 CATEGORIES = dict(
@@ -315,6 +315,21 @@ class Validity(BaseModel):
     evidence_level: Literal["explicit_dates", "unknown"] = "unknown"
 
 
+class VoucherBenefit(BaseModel):
+    currency: Literal["EUR"] = "EUR"
+    amount_cents: int = Field(gt=0)
+    earning_minimum_spend_cents: int = Field(gt=0)
+    redemption_minimum_spend_cents: int = Field(gt=0)
+    earning_category: str
+    earning_validity: Validity
+    redemption_validity: Validity
+    maximum_vouchers_per_receipt: int = Field(gt=0)
+    maximum_discount_cents: int = Field(gt=0)
+    exclusions: str
+    redemption_instructions: str
+    raw_text: str
+
+
 class Offer(BaseModel):
     id: str
     data_origin: Literal["official_live", "synthetic_fixture"] = "official_live"
@@ -342,7 +357,8 @@ class Offer(BaseModel):
     classification_version: str
     tags: list[str] = []
     package: Package
-    price: Price
+    price: Price | None = None
+    benefit: VoucherBenefit | None = None
     conditions: Conditions
     validity: Validity
     scope: dict
@@ -356,6 +372,19 @@ class Offer(BaseModel):
     last_seen_at: datetime
     last_verified_at: datetime
     published_at: datetime | None = None
+
+    @model_validator(mode="after")
+    def economic_kind(self):
+        if self.offer_type in ("product_offer", "product_coupon"):
+            if self.price is None or self.benefit is not None:
+                raise ValueError(
+                    "Un prodotto richiede un prezzo e non un buono generico"
+                )
+        elif self.price is not None or self.benefit is None:
+            raise ValueError(
+                "Un buono richiede un beneficio separato, senza prezzo prodotto"
+            )
+        return self
 
 
 def package_and_price(

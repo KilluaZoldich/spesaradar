@@ -131,17 +131,10 @@ UNSUPPORTED = [
         "message": "Accesso automatizzato bloccato dalla fonte.",
     },
     {
-        "id": "coop",
-        "name": "Coop Alleanza 3.0",
-        "support_status": "blocked_access",
-        "message": "Carpi 41012: sedi Borgogioioso e via Sigonio verificate. Accesso al servizio prodotti rifiutato; offerte non acquisite.",
-        "source_url": "https://www.coopalleanza3-0.it/fare-spesa/elenco-negozi/dettaglio-negozio/3967-ipercoop-il-borgogioioso.html",
-    },
-    {
         "id": "sigma",
         "name": "Sigma",
         "support_status": "blocked_access",
-        "message": "Carpi 41012: cercanegozi escluso da robots.txt. Nessun volantino corrente acquisito; le offerte storiche non sono mostrate come attuali.",
+        "message": "Carpi 41012: API pubblica verificata, ma nessun catalogo corrente collegato alle sedi. Il cercanegozi resta escluso da robots.txt; le offerte storiche non sono mostrate come attuali.",
         "source_url": "https://www.supersigma.com/punti-vendita/",
     },
     {
@@ -190,7 +183,7 @@ def retailers():
 
 @app.get("/api/v1/targets")
 def targets(retailer_id: str | None = None, q: str = Query("", max_length=120)):
-    availability = {id: {"current": 0, "future": 0} for id in manifests()}
+    availability = {id: {"current": 0, "future": 0, "coupons": 0} for id in manifests()}
     now = utcnow()
     with Session() as session:
         for row in session.scalars(
@@ -205,7 +198,11 @@ def targets(retailer_id: str | None = None, q: str = Query("", max_length=120)):
             if freshness == "hidden" or state == "expired":
                 continue
             availability[row.source_id][
-                "future" if state == "future" else "current"
+                "coupons"
+                if row.payload.get("benefit")
+                else "future"
+                if state == "future"
+                else "current"
             ] += 1
     return {
         "items": [
@@ -213,6 +210,7 @@ def targets(retailer_id: str | None = None, q: str = Query("", max_length=120)):
                 "id": m.source_id,
                 "retailer_id": m.retailer_id,
                 "retailer_name": m.name,
+                "capabilities": m.capabilities,
                 "availability": availability[m.source_id],
                 "type": m.scope_type,
                 "label": m.scope_label,
@@ -379,7 +377,9 @@ def offers(
         ):
             d = public_offer(row.payload, now)
             if (
-                d["quality"] == "quarantined"
+                d.get("offer_type", "product_offer")
+                not in ("product_offer", "product_coupon")
+                or d["quality"] == "quarantined"
                 or d["freshness"] == "hidden"
                 or d["temporal_status"] == "expired"
             ):
@@ -492,13 +492,36 @@ def offer_detail(offer_id: str):
 
 @app.get("/api/v1/coupons")
 def coupons(target_ids: list[str] = Query(default=[])):
-    checked_targets(target_ids)
-    return {
-        "items": [],
-        "coverage": "unsupported",
-        "message": "Buoni generici e vantaggi non ancora acquisiti dalle fonti supportate. I prezzi Lidl Plus verificati sono nella vista prodotti.",
-        "server_time": utcnow().isoformat(),
-    }
+    ids = checked_targets(target_ids)
+    now = utcnow()
+    with Session() as s:
+        items = []
+        for row in s.scalars(
+            select(OfferRow).where(
+                OfferRow.source_id.in_(ids), OfferRow.withdrawn.is_(False)
+            )
+        ):
+            d = public_offer(row.payload, now)
+            if (
+                not d.get("benefit")
+                or d["quality"] == "quarantined"
+                or d["freshness"] == "hidden"
+                or d["temporal_status"] in ("expired", "future")
+            ):
+                continue
+            items.append(d)
+        items.sort(key=lambda d: (d["validity"]["end_at_exclusive"] or "9999", d["id"]))
+        return {
+            "items": items,
+            "coverage": "partial"
+            if any("coupons" in manifests()[id].capabilities for id in ids)
+            else "unsupported",
+            "message": "Nessun buono attuale verificato per le selezioni. I prezzi con carta restano nella vista prodotti."
+            if not items
+            else "Buoni pubblicati: verifica le condizioni prima di utilizzarli.",
+            "source_states": source_states(s, ids),
+            "server_time": now.isoformat(),
+        }
 
 
 class RefreshInput(BaseModel):

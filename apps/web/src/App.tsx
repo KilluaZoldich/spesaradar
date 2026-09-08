@@ -24,7 +24,14 @@ import {
   STATIC_CATALOG,
   reloadPublishedCatalog,
 } from "./api";
-import type { Target, Offer, Catalog, SourceState } from "./types";
+import CouponCard from "./CouponCard";
+import type {
+  Target,
+  Offer,
+  Catalog,
+  SourceState,
+  CouponCatalog,
+} from "./types";
 import OfferCard, {
   Conditions,
   euros,
@@ -157,7 +164,7 @@ export default function App() {
     [tick, setTick] = useState(0),
     [offline, setOffline] = useState(!navigator.onLine),
     [detail, setDetail] = useState<Offer | null>(null),
-    [couponMessage, setCouponMessage] = useState("");
+    [couponCatalog, setCouponCatalog] = useState<CouponCatalog | null>(null);
   const initialRefresh = useRef(false);
   const generation = useRef(0),
     dialog = useRef<HTMLDialogElement>(null),
@@ -184,6 +191,17 @@ export default function App() {
           );
         if (saved.length !== valid.length) savePreferences(valid);
         setSelected(valid);
+        if (
+          valid.length &&
+          valid.every((id) => {
+            const target = t.items.find((target) => target.id === id);
+            return (
+              target?.capabilities?.includes("coupons") &&
+              !target.capabilities.includes("products")
+            );
+          })
+        )
+          setView("coupons");
         setDraft(valid);
         setEditing(!valid.length);
         if (saved.length !== valid.length)
@@ -283,13 +301,16 @@ export default function App() {
     const controller = new AbortController();
     const p = new URLSearchParams();
     selected.forEach((id) => p.append("target_ids", id));
-    api<{ message: string }>("/coupons?" + p, { signal: controller.signal })
-      .then((x) => setCouponMessage(x.message))
+    setCouponCatalog(null);
+    api<CouponCatalog>("/coupons?" + p, { signal: controller.signal })
+      .then((x) => {
+        if (!controller.signal.aborted) setCouponCatalog(x);
+      })
       .catch((e) => {
         if (e.name !== "AbortError") setError(e.message);
       });
     return () => controller.abort();
-  }, [view, selectionKey]);
+  }, [view, selectionKey, tick]);
   async function refresh(ids = selected, userRequested = false) {
     if (!ids.length) return;
     const key = ids.slice().sort().join(",");
@@ -413,6 +434,17 @@ export default function App() {
       .sort();
     generation.current++;
     setSelected(ids);
+    if (
+      ids.every((id) => {
+        const t = targets.find((t) => t.id === id);
+        return (
+          t?.capabilities?.includes("coupons") &&
+          !t.capabilities.includes("products")
+        );
+      })
+    )
+      setView("coupons");
+    else setView("products");
     currentKey.current = ids.join(",");
     savePreferences(ids);
     setCatalog(null);
@@ -973,6 +1005,18 @@ export default function App() {
                           ? "Prova un’altra ricerca o azzera i filtri."
                           : "Consulta lo stato dei supermercati qui sopra. Le promozioni future si trovano in “In arrivo”."}
                     </p>
+                    {selected.some((id) =>
+                      targets
+                        .find((t) => t.id === id)
+                        ?.capabilities?.includes("coupons"),
+                    ) && (
+                      <button
+                        className="primary"
+                        onClick={() => setView("coupons")}
+                      >
+                        Vedi buoni e vantaggi <ArrowRight size={18} />
+                      </button>
+                    )}
                     {validity === "current" &&
                       (catalog?.period_counts?.future || 0) > 0 && (
                         <button
@@ -987,15 +1031,42 @@ export default function App() {
                 )}
               </>
             ) : (
-              <div className="empty coupon-empty">
-                <Ticket size={38} strokeWidth={1.3} />
-                <h2>Buoni e vantaggi</h2>
-                <p>{couponMessage || "Verifico la copertura dei buoni…"}</p>
+              <section aria-label="Buoni e vantaggi" className="coupon-section">
+                {(couponCatalog?.items || []).filter(
+                  (o) =>
+                    (!o.validity.end_at_exclusive ||
+                      Date.parse(o.validity.end_at_exclusive) > Date.now()) &&
+                    Date.now() - Date.parse(o.last_verified_at) < 172800000,
+                ).length ? (
+                  <div className="coupon-grid">
+                    {couponCatalog!.items
+                      .filter(
+                        (o) =>
+                          (!o.validity.end_at_exclusive ||
+                            Date.parse(o.validity.end_at_exclusive) >
+                              Date.now()) &&
+                          Date.now() - Date.parse(o.last_verified_at) <
+                            172800000,
+                      )
+                      .map((o) => (
+                        <CouponCard key={o.id} coupon={o} />
+                      ))}
+                  </div>
+                ) : (
+                  <div className="empty coupon-empty">
+                    <Ticket size={38} strokeWidth={1.3} />
+                    <h2>Buoni e vantaggi</h2>
+                    <p>
+                      {couponCatalog?.message ||
+                        "Verifico la copertura dei buoni…"}
+                    </p>
+                  </div>
+                )}
                 <p className="muted">
                   SpesaRadar non attiva coupon e non richiede credenziali o
                   carte fedeltà.
                 </p>
-              </div>
+              </section>
             )}
           </>
         )}

@@ -2,13 +2,13 @@
 
 Le offerte dei tuoi supermercati, già divise per categoria. Web app locale in italiano, con raccolta automatica da siti ufficiali, database persistente e nessun LLM o servizio di scraping a pagamento.
 
-**Rilascio 0.4 parziale.** Sei insegne con prodotti reali: **Lidl** ed **Eurospin** (cataloghi nazionali), **MD** (Milano, via Rubens 8), **Conad** (tre sedi a Carpi), **Despar / Interspar Carpi** e **Famila Carpi**. La selezione mostra una sola voce per insegna e permette di scegliere/cambiare la sede al suo interno. Despar: 175 prodotti dalle prime 20 pagine del catalogo; Famila: 130 prodotti del mensile Selex. Le meccaniche non verificabili sono escluse. I cataloghi nazionali non confermano l’adesione del negozio. MD ha date non confermate. La copertura rimane selettiva; social e buoni generici non sono acquisiti. Vedi [audit](docs/source-audit.md) e [verifiche](docs/verification.md).
+**Rilascio 0.5 parziale.** Sei insegne con prodotti reali: **Lidl** ed **Eurospin** (cataloghi nazionali), **MD** (Milano, via Rubens 8), **Conad** (tre sedi a Carpi), **Despar / Interspar Carpi** e **Famila Carpi**. La selezione mostra una sola voce per insegna e permette di scegliere/cambiare la sede al suo interno. Despar: 175 prodotti dalle prime 20 pagine del catalogo; Famila: 130 prodotti del mensile Selex. Le meccaniche non verificabili sono escluse. I cataloghi nazionali non confermano l’adesione del negozio. MD ha date non confermate. La copertura rimane selettiva. **Coop Borgogioioso Carpi** aggiunge un buono pubblico cartoleria nella vista dedicata; non aggiunge un catalogo prodotti. I social non sono acquisiti. Vedi [audit](docs/source-audit.md) e [verifiche](docs/verification.md).
 
 ## Versione online
 
 [Apri SpesaRadar su GitHub Pages](https://killuazoldich.github.io/spesaradar/). Il catalogo viene raccolto periodicamente da GitHub Actions; ricerca, filtri e dettaglio funzionano da remoto. Il pulsante di aggiornamento controlla l’ultima pubblicazione, senza avviare una raccolta immediata. [Funzionamento, gratuità e limiti](docs/pages.md).
 
-[Apri direttamente la selezione Carpi · 41012](https://killuazoldich.github.io/spesaradar/?cap=41012), oppure cerca **41012** nella selezione. Conad, Interspar e Famila hanno sedi verificate a Carpi. Coop e Sigma restano nella copertura non disponibile, con i limiti riscontrati; non vengono mostrate offerte inventate.
+[Apri direttamente la selezione Carpi · 41012](https://killuazoldich.github.io/spesaradar/?cap=41012), oppure cerca **41012** nella selezione. Conad, Interspar e Famila hanno sedi verificate a Carpi. Coop Borgogioioso è disponibile soltanto per il buono cartoleria verificato. I prodotti Coop e il catalogo corrente Sigma Carpi restano non acquisiti; non vengono mostrate offerte inventate.
 
 ## Avvio con Docker
 
@@ -29,7 +29,7 @@ Per avvio in background: `docker compose up --build -d`. Per fermare: `docker co
 - Catalogo comune, 18 categorie espandibili, ricerca per parole in AND, categorie multiple in OR, filtri per insegna, fedeltà e quantità minima rimovibili anche a pannello chiuso.
 - **Disponibili oggi** e **In arrivo** separano validità corrente e futura. I conteggi rispettano gli altri filtri; lo stato vuoto offre un pulsante diretto alle promozioni future. Un catalogo futuro non è un errore: durante la verifica Eurospin esponeva la campagna dal 10 al 20 settembre.
 - Prezzi a confezione, kg, litro o pezzo, formato, calcolo unitario quando documentabile, condizioni visibili e dettaglio con fonte/ultima verifica. Ordinamento per prezzo solo sulla base esplicitamente scelta.
-- **Buoni e vantaggi** indica la mancata copertura. I prezzi Lidl Plus verificati restano nella vista prodotti con badge.
+- **Buoni e vantaggi** mostra il buono Coop: ottenimento e utilizzo hanno finestre e spese minime distinte. Coop è etichettato «solo buoni» nella selezione. I prezzi Lidl Plus verificati restano nella vista prodotti con badge.
 - **Aggiorna offerte** riusa cache e job: cooldown minimo 30 minuti, aggiornamento dopo 12 ore. Cambiare filtro non effettua crawling. Il worker pianifica soltanto gli ambiti richiesti negli ultimi 7 giorni.
 - Un errore è circoscritto alla fonte. I dati oltre 12 ore sono segnalati; oltre 48 ore o dopo scadenza non compaiono nel feed ordinario. Offline, l’app già aperta può mantenere risultati ancora entro soglia; non è una PWA con cache completa.
 

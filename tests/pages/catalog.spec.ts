@@ -191,7 +191,7 @@ test("Carpi 41012: una voce Conad, cambio sede e nuove insegne", async ({
   await expect(page.locator('[data-retailer="famila"]')).toBeVisible();
   await expect(page.locator('[data-retailer="despar"]')).toBeVisible();
   await page.locator(".unsupported summary").click();
-  await expect(page.locator(".unsupported")).toContainText("Coop Alleanza 3.0");
+  await expect(page.locator('[data-retailer="coop"]')).toContainText("Solo buoni e vantaggi");
   await expect(page.locator(".unsupported")).toContainText("Sigma");
   await expect(page.locator(".unsupported")).toContainText("non acquisite");
   await page.screenshot({ path: "../../docs/carpi-selection-mobile.png" });
@@ -281,5 +281,60 @@ test("Carpi: Famila e Interspar nel feed, cambio sede e preferenze senza duplica
   const { default: AxeBuilder } =
     await import("../../apps/web/node_modules/@axe-core/playwright/dist/index.mjs");
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test("Coop Carpi: solo buoni, beneficio separato e condizioni visibili", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto("./?cap=41012");
+  const choice = page.locator('[data-retailer="coop"]');
+  await expect(choice).toContainText("Solo buoni e vantaggi");
+  await choice.getByRole("checkbox").check();
+  await page
+    .getByRole("button", { name: "Cerca offerte", exact: true })
+    .click();
+  const card = page.locator(".coupon-card");
+  await expect(card).toHaveCount(1);
+  await expect(card.getByRole("heading")).toHaveText("10,00 € di buono");
+  await expect(card).toContainText("20 settembre 2026");
+  await expect(card).toContainText("7 ottobre 2026");
+  await expect(card).toContainText("spesa minima di 30,00 €");
+  await expect(card).toContainText("Massimo 3 buoni");
+  await expect(card.getByText(/digitale da attivare/)).toBeVisible();
+  await expect(page.locator(".offer-card")).toHaveCount(0);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: "../../docs/coop-voucher-mobile.png",
+    fullPage: true,
+  });
+  await card
+    .getByText("Condizioni e prodotti esclusi", { exact: true })
+    .click();
+  await expect(card.getByText(/latte infanzia tipo 1/)).toBeVisible();
+  await expect(card.getByRole("link")).toHaveAttribute(
+    "href",
+    /coopalleanza3-0\.it\/volantino\/promozione\//,
+  );
+  const { default: AxeBuilder } =
+    await import("../../apps/web/node_modules/@axe-core/playwright/dist/index.mjs");
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.reload();
+  await expect(card).toBeVisible();
+  await page
+    .getByRole("button", { name: "Prodotti in offerta", exact: true })
+    .click();
+  await expect(page.locator(".offer-card")).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Vedi buoni e vantaggi", exact: true })
+    .click();
+  await expect(card).toBeVisible();
   expect(errors).toEqual([]);
 });

@@ -106,8 +106,8 @@ describe("Catalogo pubblicato su Pages", () => {
     ).toISOString();
     s.records[1].withdrawn = true;
     expect(availableTargets(s, now).items.map((t) => t.availability)).toEqual([
-      { current: 1, future: 1 },
-      { current: 0, future: 0 },
+      { current: 1, future: 1, coupons: 0 },
+      { current: 0, future: 0, coupons: 0 },
     ]);
     s.records[0].offer.validity.end_at_exclusive = null;
     expect(
@@ -153,7 +153,7 @@ describe("Catalogo pubblicato su Pages", () => {
   });
   it("confronta soltanto basi compatibili e senza quantità minime", () => {
     const s = snapshot();
-    s.records[0].offer.price.basis = "kg";
+    s.records[0].offer.price!.basis = "kg";
     s.records[1].offer.conditions.minimum_pack_count = 2;
     expect(
       queryCatalog(s, params("sort=price&price_basis=pack"), now).items.map(
@@ -235,4 +235,34 @@ it("conta le offerte per periodo rispettando gli altri filtri", () => {
     current: 0,
     future: 1,
   });
+});
+
+it("buoni separati da prodotti, conteggi e prezzi; scadenza e freschezza restano applicate", async () => {
+  const { couponFixture } = await import("./coupon.fixture");
+  const { queryCoupons } = await import("./staticCatalog");
+  const s = snapshot();
+  s.records.push({
+    withdrawn: false,
+    offer: {
+      ...couponFixture,
+      source_id: "lidl-national",
+      first_seen_at: new Date(now).toISOString(),
+      quality: "limited",
+      data_origin: "official_live",
+    },
+  });
+  expect(
+    queryCatalog(s, params(), now).items.every((o) => o.price !== null),
+  ).toBe(true);
+  expect(queryCoupons(s, params(), now).items).toHaveLength(1);
+  expect(availableTargets(s, now).items[0].availability.coupons).toBe(1);
+  expect(queryCoupons(s, params(), now + 49 * 3600000).items).toHaveLength(0);
+  expect(() => queryCoupons(s, new URLSearchParams(), now)).toThrow(
+    /Seleziona/,
+  );
+  const voucher = s.records.at(-1)!;
+  voucher.offer.last_verified_at = "2026-10-08T10:00:00Z";
+  expect(
+    queryCoupons(s, params(), Date.parse("2026-10-08T10:00:00Z")).items,
+  ).toHaveLength(0);
 });

@@ -14,7 +14,7 @@ React 19, TypeScript, Vite e Tailwind compongono l’interfaccia; Nginx serve fi
 
 Prezzi pubblicizzati in centesimi interi. Quantità e prezzi unitari in stringhe Decimal; arrotondamento `ROUND_HALF_UP` a quattro decimali per il calcolo unitario. Il frontend formatta per la visualizzazione, non calcola nuovi benefici economici. Il testo di formato ambiguo resta disponibile, ma non genera una quantità normalizzata. Peso sgocciolato/range non vengono convertiti automaticamente.
 
-Condizioni sconosciute restano `null`. Nessuna inferenza di prezzo pieno, carta assente, quantità minima assente, cumulabilità o disponibilità. Non sono acquisiti buoni generici: l’endpoint e la vista lo dichiarano. Non sono implementati calcoli di carrelli 3×2 o vantaggi futuri; meccaniche economiche che l’adapter non sa interpretare vengono escluse dal lotto pubblicabile.
+Condizioni sconosciute restano `null`. Nessuna inferenza di prezzo pieno, carta assente, quantità minima assente, cumulabilità o disponibilità. Il buono cartoleria Coop usa `VoucherBenefit`, separato da `Price`: importo del beneficio, spese minime di ottenimento e utilizzo, due finestre, esclusioni e istruzioni. Il prezzo prodotto è `null`; un validatore vieta la mescolanza. `/offers` esclude i buoni, `/coupons` ne controlla freschezza, scadenza e ambito. Non sono implementati calcoli di carrelli 3×2 o equivalenze di risparmio futuro; meccaniche economiche che l’adapter non sa interpretare vengono escluse dal lotto pubblicabile.
 
 ## Coda e riconciliazione
 

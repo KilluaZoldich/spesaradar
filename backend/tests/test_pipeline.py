@@ -256,4 +256,5 @@ def test_period_facets_and_target_availability(client):
     assert next(x for x in t if x["id"] == "lidl-national")["availability"] == {
         "current": 1,
         "future": 1,
+        "coupons": 0,
     }

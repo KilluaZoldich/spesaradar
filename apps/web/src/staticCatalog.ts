@@ -1,4 +1,11 @@
-import type { Catalog, Offer, SourceState, Target } from "./types";
+import type {
+  Catalog,
+  Coupon,
+  CouponCatalog,
+  Offer,
+  SourceState,
+  Target,
+} from "./types";
 
 export type Snapshot = {
   schema_version: 1;
@@ -15,7 +22,7 @@ export type Snapshot = {
   categories: { items: { id: string; label: string }[] };
   sources: SourceState[];
   records: {
-    offer: Offer & {
+    offer: (Offer | Coupon) & {
       source_id: string;
       first_seen_at: string;
       quality: string;
@@ -26,7 +33,10 @@ export type Snapshot = {
 };
 export function availableTargets(snapshot: Snapshot, now = Date.now()) {
   const availability = Object.fromEntries(
-    snapshot.targets.items.map((t) => [t.id, { current: 0, future: 0 }]),
+    snapshot.targets.items.map((t) => [
+      t.id,
+      { current: 0, future: 0, coupons: 0 },
+    ]),
   );
   for (const { offer: o, withdrawn } of snapshot.records) {
     const age = now - Date.parse(o.last_verified_at);
@@ -41,7 +51,11 @@ export function availableTargets(snapshot: Snapshot, now = Date.now()) {
     )
       continue;
     availability[o.source_id][
-      now < Date.parse(o.validity.start_at || "") ? "future" : "current"
+      o.price === null
+        ? "coupons"
+        : now < Date.parse(o.validity.start_at || "")
+          ? "future"
+          : "current"
     ]++;
   }
   return {
@@ -50,6 +64,61 @@ export function availableTargets(snapshot: Snapshot, now = Date.now()) {
       ...t,
       availability: availability[t.id],
     })),
+  };
+}
+export function queryCoupons(
+  snapshot: Snapshot,
+  p: URLSearchParams,
+  now = Date.now(),
+): CouponCatalog {
+  const ids = [...new Set(p.getAll("target_ids"))];
+  if (!ids.length)
+    throw new CatalogError(
+      "SELECT_TARGETS",
+      "Seleziona almeno un negozio o ambito.",
+    );
+  if (
+    ids.length > snapshot.targets.max_selections ||
+    ids.some((id) => !snapshot.targets.items.some((t) => t.id === id))
+  )
+    throw new CatalogError(
+      "UNSUPPORTED_TARGET",
+      "Controlla gli ambiti selezionati.",
+    );
+  const items: Coupon[] = [];
+  for (const { offer: o, withdrawn } of snapshot.records) {
+    const age = now - Date.parse(o.last_verified_at);
+    if (
+      o.price !== null ||
+      withdrawn ||
+      !ids.includes(o.source_id) ||
+      o.quality === "quarantined" ||
+      o.data_origin !== "official_live" ||
+      !Number.isFinite(age) ||
+      age > 48 * 3600000 ||
+      now >= Date.parse(o.validity.end_at_exclusive || "") ||
+      now < Date.parse(o.validity.start_at || "")
+    )
+      continue;
+    items.push({
+      ...o,
+      freshness: age > 12 * 3600000 ? "stale" : "fresh",
+      temporal_status: "active",
+    });
+  }
+  items.sort(
+    (a, b) =>
+      (a.validity.end_at_exclusive || "9999").localeCompare(
+        b.validity.end_at_exclusive || "9999",
+      ) || a.id.localeCompare(b.id),
+  );
+  return {
+    items,
+    message: items.length
+      ? "Buoni pubblicati: verifica le condizioni prima di utilizzarli."
+      : "Nessun buono attuale verificato per le selezioni. I prezzi con carta restano nella vista prodotti.",
+    server_time: new Date(now).toISOString(),
+    source_states: snapshot.sources.filter((s) => ids.includes(s.source_id)),
   };
 }
 export class CatalogError extends Error {
@@ -104,10 +173,11 @@ export function queryCatalog(
     snapshot.categories.items.map((c) => [c.id, 0]),
   );
   const periodCounts = { current: 0, future: 0 };
-  const items: Snapshot["records"][number]["offer"][] = [];
+  const items: (Offer & { first_seen_at: string })[] = [];
   for (const record of snapshot.records) {
     const original = record.offer;
     if (
+      original.price === null ||
       record.withdrawn ||
       original.data_origin !== "official_live" ||
       original.quality === "quarantined" ||
@@ -341,12 +411,7 @@ export async function staticApi<T>(
       freshness:
         age > 48 * 3600000 ? "hidden" : age > 12 * 3600000 ? "stale" : "fresh",
     };
-  } else if (route === "/coupons")
-    result = {
-      items: [],
-      message:
-        "Buoni generici non acquisiti. I prezzi Lidl Plus verificati sono nella vista prodotti.",
-    };
+  } else if (route === "/coupons") result = queryCoupons(snapshot, p, clock());
   else throw new CatalogError("NOT_FOUND", "Risorsa non disponibile.");
   return result as T;
 }

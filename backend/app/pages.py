@@ -53,7 +53,7 @@ def safe_offer(data):
     d["evidence"] = {
         "url": offer.source_url,
         "selector": str(offer.evidence.get("selector", ""))[:500],
-        "raw_price": offer.price.raw_text,
+        "raw_price": offer.price.raw_text if offer.price else None,
     }
     return d
 

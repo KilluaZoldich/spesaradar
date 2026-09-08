@@ -187,3 +187,25 @@ Ricostruzione finale `docker compose up --build -d` riuscita: migrazioni exit 0,
 Confronto di tutti i 305 nuovi record pubblicati con quelli verificati localmente: stessi ID, titolo, prezzo/base, formato, condizioni, date, categoria, tag, fonte e ambito; zero record mancanti o differenze nei campi confrontati. Questo controllo confronta le due estrazioni; la verifica contro le fonti è il campione manuale descritto sopra.
 
 `PAGES_TEST_URL=https://killuazoldich.github.io/spesaradar/ npm --prefix apps/web run test:pages`: **6 passati in 9,1 s** sul sito pubblico HTTPS, inclusi i nuovi supermercati, il cambio sede Conad, ricerca CAP 41012, persistenza delle selezioni, categorie, prezzi, dettaglio PDF, controlli Axe e assenza di overflow a 360 px. Screenshot pubblici aggiornati e aperti per ispezione visiva: [Interspar mobile](despar-mobile.png), [selezione per insegna](selection-one-brand-mobile.png). [Metadati e confronto](six-retailer-deployment.json), [report browser](pages-e2e-results.json).
+
+## Buono Coop e percorso Sigma indipendente — 8 settembre 2026
+
+Ambiente e dipendenze invariati. La ricerca Sigma ha individuato l'API REST pubblica dichiarata dal sito e metadati di volantini recenti; il filtro Realco arriva però a giugno 2026 e la ricerca sedi Carpi restituisce una lista vuota. Nessun prezzo dedotto da questi risultati. Le pagine Coop prodotti restano prive di un catalogo HTML estraibile; il dettaglio pubblico del buono cartoleria contiene invece condizioni complete, verificate manualmente per tutto il perimetro del profilo (**un buono**).
+
+Il modello `VoucherBenefit` separa importo del beneficio, minimi di spesa e finestre di ottenimento/utilizzo. `price=null` per il buono, con validatore che impedisce di convertirlo in prodotto. Pubblicazione atomica, filtro temporale/freschezza e snapshot Pages riusano la pipeline esistente. Non servono modifiche alle tabelle SQLite: i payload JSON mantengono compatibilità con i prodotti precedenti. Il buono non incrementa i conteggi prodotti e non entra nell'ordinamento per prezzo. Il frontend distingue i negozi con soli buoni e apre direttamente la vista pertinente quando è selezionato solo Coop.
+
+| Verifica | Esito |
+| --- | --- |
+| `PYTHONPATH=backend .venv/bin/pytest backend/tests -q --tb=short` | **193 passati**, 1,55 s; due warning upstream già documentati |
+| `.venv/bin/ruff check backend/app backend/tests` | Passato |
+| `npm --prefix apps/web test` | **25 passati**, inclusi separazione prodotti/buoni e fase di solo utilizzo |
+| Build statica e build Compose | Riuscite; API healthy e migrazioni exit 0 |
+| `python -m app.pages --restore ... --collect --export ...` su DB isolato | **Un buono Coop**, 3 richieste, 6,59 s; 1160 record prodotti precedenti preservati |
+| `npm --prefix apps/web run test:pages` su anteprima 8082 | **7 passati**, 8,7 s, compresa nuova scheda Coop |
+| `npm --prefix apps/web run test:e2e` su Docker 8080 | **9 passati**, 8,7 s |
+
+Il confronto manuale comprende beneficio 10 €, soglia ottenimento 30 € in cartoleria, soglia utilizzo 30 €, massimo tre buoni/30 €, esclusioni, non cumulabilità, opzioni cartacea/digitale e date. L'anno del termine 7 ottobre è interpretato nel contesto della stessa campagna con anno 2026 esplicito, non preso dal download; inizio utilizzo sconosciuto. Le condizioni sono protette anche da hash del corpo normalizzato verificato: qualsiasi modifica richiede nuovo audit e parser aggiornato. Nessuna promessa di coprire futuri buoni automaticamente.
+
+Revisione separata: nessun rilievo Critical/Required residuo; controllo della capture reale, 27 test backend mirati e 12 frontend mirati passati. Screenshot [buono Coop mobile](coop-voucher-mobile.png) aperto e ispezionato: beneficio, due finestre e minimi leggibili, nessun prezzo prodotto falso. Test browser controlla anche esclusioni, link ufficiale, reload, apertura automatica della vista buoni, ritorno dalla vista prodotti, Axe e assenza di overflow a 360 px. Corretto il test storico che cercava Coop fra le insegne totalmente non disponibili; adesso verifica l'etichetta «solo buoni».
+
+Restano **sei insegne con prodotti**, più Coop per un solo buono. Catalogo prodotti Coop e Sigma Carpi ancora non completati. L'obiettivo complessivo non viene dichiarato concluso.

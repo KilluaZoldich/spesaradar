@@ -144,3 +144,27 @@ La nuova verifica riguarda **quattro insegne**, senza ampliare lo scouting a cat
 
 - Sigma: esaminati `https://www.supersigma.com/`, `/punti-vendita/`, l'iframe ufficiale `/wp-content/themes/montale-wp/store-locator/`, il relativo bundle JS e il JSON delle province. Il cercanegozi usa `/wp-admin/admin-ajax.php`, **escluso da robots.txt**: il client ha fermato la richiesta prima del POST. Nessuna chiave Maps viene copiata o usata dal prodotto. La ricerca di altre risorse ufficiali ha trovato volantini storici del 2025, non un catalogo corrente verificato per Carpi. Stato `blocked_access`, nessun prezzo live.
 - Coop: resta valido l'audit delle sedi Carpi e del servizio rifiutato. La nuova ricerca di PDF ufficiali ha trovato campagne passate, senza un nuovo collegamento verificato alla campagna corrente di Carpi. Nessun URL inventato, nessun accesso alternativo al servizio bloccato. Non è conteggiata fra le insegne supportate.
+
+## 8 settembre 2026 — verifica aggiuntiva Sigma e buono Coop
+
+### Sigma: API pubblica accessibile, applicabilità corrente Carpi non verificata
+
+Il markup della homepage ufficiale dichiara `rel="https://api.w.org/"` verso `https://www.supersigma.com/wp-json/`. L'indice acquisito pubblicamente e senza credenziali dichiara le route GET `/wp/v2/store`, `/wp/v2/volantino`, `/wp/v2/media` e `/wp/v2/cedi`. Sono stati usati soltanto contesto pubblico, filtri e metodi GET dichiarati; nessuna route amministrativa, utenti, credenziali o esportazione privata è stata chiamata. Questo percorso indipendente non utilizza `/wp-admin/admin-ajax.php`, che resta escluso.
+
+- Ricerca `store?search=Carpi&per_page=10`: lista vuota, non prova dell'assenza fisica delle sedi.
+- `volantino?per_page=10`: metadati di campagne anche di settembre 2026; campi personalizzati vuoti, senza prove di applicabilità Carpi.
+- `media?mime_type=application%2Fpdf&after=2026-08-15T00%3A00%3A00&per_page=20`: venti PDF ufficiali recenti elencati; nessuno è automaticamente ammesso come volantino nazionale o locale. Non scaricati per cercare prezzi senza prima risolverne l'ambito.
+- Tassonomia `cedi?search=realco` identifica Realco `31763`; `store?cedi=31763&per_page=50` è vuoto; i dieci volantini più recenti `volantino?cedi=31763&per_page=10` arrivano al **15 giugno 2026**. Data di pubblicazione ≠ validità commerciale; nessun prezzo storico importato.
+- La homepage Sigma collega anche `https://www.realco.it/` e `https://sigmaonline.it/`. Realco homepage e pagina insegne non recuperabili nel budget di retry (servizio indisponibile anche nella verifica web); Sigma Online restituisce blocco di accesso. Nessuna modifica di identità o uso di ambienti sandbox/staging comparsi nei risultati di ricerca.
+
+Questa verifica supera l'ipotesi «nessun percorso Sigma accessibile», ma non consente di abilitare il catalogo corrente di Carpi. Le notizie esterne su chiusure/ristrutturazioni non sono usate per dichiarare aperta o chiusa una sede nell'app. Nessun terzo fornisce prezzi al catalogo.
+
+### Coop Borgogioioso — `partial`, solo un buono pubblico
+
+Pagine ufficiali nuovamente esaminate: [sede](https://www.coopalleanza3-0.it/fare-spesa/elenco-negozi/dettaglio-negozio/3967-ipercoop-il-borgogioioso.html), [offerte e sconti](https://www.coopalleanza3-0.it/fare-spesa/offerte-sconti.html), e il catalogo P2618IS collegato alla sede. Il catalogo prodotti contiene una shell senza prezzi: il servizio precedentemente bloccato non viene richiamato.
+
+La sede collega invece il dettaglio HTML pubblico [Spendi e riprendi cartoleria](https://www.coopalleanza3-0.it/volantino/promozione/featured/3967-ipercoop-il-borgogioioso/spendi-riprendi-scuola.html). Canonica e `data-pdv_id=9012` confermano la sede. Il corpo `.content-title.black .promotion-content` contiene l'intera meccanica: ogni 30 € di cartoleria genera un buono da 10 €, da usare su almeno 30 € di spesa; massimo tre buoni e 30 € di sconto nello stesso scontrino. Nessuna equivalenza percentuale calcolata.
+
+Ottenimento 16 luglio–20 settembre; testo esplicito «20 settembre 2026» fornisce l'anno della medesima campagna. Termine di utilizzo 7 ottobre, interpretato nello stesso anno della campagna, senza ricavarlo dall'orologio del download. Inizio utilizzo non specificato e conservato `null`. Esclusioni integrali, non cumulabilità, una sola utilizzazione per buono e procedure cartacea/digitale preservate. L'app non attiva buoni, non accede ad aree personali e non dichiara un requisito di carta assente senza evidenza: qui il testo comprende esplicitamente i non soci.
+
+Campione verificato: **tutto il perimetro del profilo, un buono**, confronto manuale di ogni campo con la pagina. Un hash del corpo normalizzato blocca la pubblicazione se cambia qualsiasi clausola; ciò impone una nuova verifica anche per variazioni editoriali. Il profilo non comprende tutte le iniziative Coop e non certifica la presenza dei prodotti in ogni reparto. HTTP condiviso con robots, TLS, allowlist, cookie isolati e budget; nessuna nuova dipendenza. Prova worker: **3 richieste, 6,59 secondi, un buono pubblicato**. In UI la selezione dichiara «Solo buoni e vantaggi · prodotti non acquisiti». Sei insegne con prodotti rimangono sei; Coop non viene contato come settimo catalogo prodotti.

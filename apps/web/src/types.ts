@@ -2,7 +2,8 @@ export type Target = {
   id: string;
   retailer_id: string;
   retailer_name: string;
-  availability?: { current: number; future: number };
+  availability?: { current: number; future: number; coupons?: number };
+  capabilities?: string[];
   type: string;
   label: string;
   enabled: boolean;
@@ -19,6 +20,7 @@ export type SourceState = {
   count: number | null;
 };
 export type Offer = {
+  offer_type?: "product_offer" | "product_coupon";
   id: string;
   title: string;
   brand: string | null;
@@ -66,4 +68,29 @@ export type Catalog = {
   server_time: string;
   source_states: SourceState[];
   limitations: string[];
+};
+
+export type Coupon = Omit<Offer, "price" | "offer_type" | "evidence"> & {
+  offer_type: "future_voucher" | "basket_coupon" | "loyalty_benefit";
+  evidence: { url: string; selector: string; raw_price: null };
+  price: null;
+  benefit: {
+    amount_cents: number;
+    earning_minimum_spend_cents: number;
+    redemption_minimum_spend_cents: number;
+    earning_category: string;
+    earning_validity: Offer["validity"];
+    redemption_validity: Offer["validity"];
+    maximum_vouchers_per_receipt: number;
+    maximum_discount_cents: number;
+    exclusions: string;
+    redemption_instructions: string;
+    raw_text: string;
+  };
+};
+export type CouponCatalog = {
+  items: Coupon[];
+  message: string;
+  server_time?: string;
+  source_states?: SourceState[];
 };

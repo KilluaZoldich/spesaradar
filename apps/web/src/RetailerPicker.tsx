@@ -80,18 +80,28 @@ export default function RetailerPicker({
                       : first.label
                     : `${options.length} sedi disponibili · scegli la tua`}
               </small>
-              {availability && (
-                <span className="retailer-stock">
-                  {availability.current
-                    ? `${availability.current} offerte oggi`
-                    : availability.future
-                      ? `Dal prossimo volantino`
-                      : "Pronto per la ricerca"}
-                  {availability.future > 0 && availability.current > 0
-                    ? ` · ${availability.future} in arrivo`
-                    : ""}
-                </span>
-              )}
+              {first.capabilities?.includes("coupons") &&
+                !first.capabilities.includes("products") && (
+                  <span className="retailer-stock">
+                    Solo buoni e vantaggi · prodotti non acquisiti
+                  </span>
+                )}
+              {availability &&
+                !(
+                  first.capabilities?.includes("coupons") &&
+                  !first.capabilities.includes("products")
+                ) && (
+                  <span className="retailer-stock">
+                    {availability.current
+                      ? `${availability.current} offerte oggi`
+                      : availability.future
+                        ? `Dal prossimo volantino`
+                        : "Pronto per la ricerca"}
+                    {availability.future > 0 && availability.current > 0
+                      ? ` · ${availability.future} in arrivo`
+                      : ""}
+                  </span>
+                )}
             </span>
             {chosen && !single ? (
               <Check size={20} aria-hidden="true" />

@@ -137,7 +137,10 @@ def publish(job_id, token, batch, metrics=None):
         conflicts = set()
         for offer in batch.offers:
             data = offer.model_dump(mode="json")
-            if offer.id in incoming and incoming[offer.id]["price"] != data["price"]:
+            if offer.id in incoming and any(
+                incoming[offer.id].get(field) != data.get(field)
+                for field in ("price", "benefit", "conditions")
+            ):
                 conflicts.add(offer.id)
                 continue
             incoming[offer.id] = data
@@ -198,6 +201,12 @@ def publish(job_id, token, batch, metrics=None):
             if state == "partial"
             else None
         )
+        if (
+            state == "partial"
+            and "coupons" in manifests()[job.source_id].capabilities
+            and "products" not in manifests()[job.source_id].capabilities
+        ):
+            source.message = "Buono verificato; catalogo prodotti non acquisito"
         source.metrics = {
             "extracted": batch.extracted,
             "published": len(incoming),

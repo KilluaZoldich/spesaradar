@@ -37,7 +37,13 @@ class Manifest(BaseModel):
     timeout_seconds: int = Field(le=30)
     connector: (
         Literal[
-            "lidl", "eurospin", "md", "conad_pdf", "despar_html", "famila_selex_pdf"
+            "lidl",
+            "eurospin",
+            "md",
+            "conad_pdf",
+            "despar_html",
+            "famila_selex_pdf",
+            "coop_vouchers",
         ]
         | None
     ) = None

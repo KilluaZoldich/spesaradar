@@ -4,6 +4,7 @@ from urllib.parse import urljoin
 
 from app.adapters.base import Batch, StructuralError
 from app.adapters.conad import ConadPDFAdapter, resolve, validate_pdf_url
+from app.adapters.coop import collect_coop
 from app.adapters.despar import collect_despar
 from app.adapters.eurospin import EurospinAdapter
 from app.adapters.famila import collect_famila
@@ -53,6 +54,8 @@ def collect_pdf(m, fetcher, stage):
 
 def collect(m, fetcher, stage):
     family = m.connector or m.retailer_id
+    if family == "coop_vouchers":
+        return collect_coop(m, fetcher, stage)
     if family == "famila_selex_pdf":
         return collect_famila(m, fetcher, stage)
     if family == "despar_html":
