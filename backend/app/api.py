@@ -101,6 +101,30 @@ async def local_protection(request: Request, call_next):
 
 UNSUPPORTED = [
     {
+        "id": "carrefour",
+        "name": "Carrefour",
+        "support_status": "permission_required",
+        "message": "Riuso dei contenuti soggetto ad autorizzazione; non acquisito.",
+    },
+    {
+        "id": "ins",
+        "name": "iN’s",
+        "support_status": "unsupported_format",
+        "message": "Volantino grafico: prezzi non ancora verificati automaticamente.",
+    },
+    {
+        "id": "dpiu",
+        "name": "DPiù",
+        "support_status": "candidate",
+        "message": "Catalogo non ancora verificato; accesso TLS da risolvere.",
+    },
+    {
+        "id": "todis",
+        "name": "Todis",
+        "support_status": "candidate",
+        "message": "Offerte alimentari per sede non ancora verificate.",
+    },
+    {
         "id": "aldi",
         "name": "ALDI",
         "support_status": "blocked_access",
@@ -153,12 +177,30 @@ def retailers():
 
 @app.get("/api/v1/targets")
 def targets(retailer_id: str | None = None, q: str = Query("", max_length=120)):
+    availability = {id: {"current": 0, "future": 0} for id in manifests()}
+    now = utcnow()
+    with Session() as session:
+        for row in session.scalars(
+            select(OfferRow).where(OfferRow.withdrawn.is_(False))
+        ):
+            if (
+                row.source_id not in availability
+                or row.payload["quality"] == "quarantined"
+            ):
+                continue
+            state, freshness = temporal(row.payload, now)
+            if freshness == "hidden" or state == "expired":
+                continue
+            availability[row.source_id][
+                "future" if state == "future" else "current"
+            ] += 1
     return {
         "items": [
             {
                 "id": m.source_id,
                 "retailer_id": m.retailer_id,
                 "retailer_name": m.name,
+                "availability": availability[m.source_id],
                 "type": m.scope_type,
                 "label": m.scope_label,
                 "enabled": m.enabled,
@@ -270,6 +312,7 @@ def offers(
     now = utcnow()
     tokens = normalized(q).split()
     counts = {k: 0 for k in CATEGORIES}
+    period_counts = {"current": 0, "future": 0}
     fingerprint = hashlib.sha256(
         json.dumps(
             [
@@ -328,10 +371,6 @@ def offers(
                 or d["temporal_status"] == "expired"
             ):
                 continue
-            if validity == "current" and d["temporal_status"] == "future":
-                continue
-            if validity == "future" and d["temporal_status"] != "future":
-                continue
             if retailer_ids and d["retailer_id"] not in retailer_ids:
                 continue
             searchable = normalized(d["title"] + " " + (d["brand"] or "")).split()
@@ -362,6 +401,14 @@ def offers(
             if sort == "price":
                 if d["price"]["basis"] != price_basis or minimum and minimum > 1:
                     continue
+            if not category_ids or d["category_id"] in category_ids:
+                period_counts[
+                    "future" if d["temporal_status"] == "future" else "current"
+                ] += 1
+            if validity == "current" and d["temporal_status"] == "future":
+                continue
+            if validity == "future" and d["temporal_status"] != "future":
+                continue
             counts[d["category_id"]] += 1
             if category_ids and d["category_id"] not in category_ids:
                 continue
@@ -401,11 +448,12 @@ def offers(
             "next_cursor": next_cursor,
             "total": len(selected),
             "category_counts": counts,
+            "period_counts": period_counts,
             "catalog_revision": revision,
             "server_time": now.isoformat(),
             "source_states": source_states(s, ids),
             "limitations": [
-                "Cataloghi nazionali: adesione del negozio non verificata.",
+                "Consulta l’ambito di ciascuna offerta: sede o catalogo nazionale.",
                 "Le offerte pubblicate non garantiscono disponibilità a scaffale.",
             ]
             + (

@@ -146,3 +146,22 @@ def test_live_classification_regressions(title, original, expected):
 )
 def test_nonfood_and_ingredient_ambiguities(title, original, expected):
     assert classify(title, original)["category_id"] == expected
+
+
+@pytest.mark.parametrize(
+    "title,original,expected",
+    [
+        ("Tortellini al prosciutto crudo", "FRESCO", "pasta_riso_cereali"),
+        ("Ravioli alla carne", "FRESCO", "pasta_riso_cereali"),
+        ("Pure' di patate", "FRESCO", "piatti_pronti"),
+        ("Pampers Baby-Dry Junior", "CURA PERSONA", "infanzia"),
+        ("Ciotola", "PETCARE", "animali"),
+        ("Stracchino", "FRESCO", "latticini_uova"),
+        ("I 7 Siciliani Terre Siciliane IGT", "BEVANDE", "bevande"),
+        ("2 Cannoli siciliani", "FRESCO", "dolci"),
+        ("Wafer alla vaniglia", "DROGHERIA ALIMENTARE", "dolci"),
+        ("Trofie", "FRESCO", "pasta_riso_cereali"),
+    ],
+)
+def test_md_classification(title, original, expected):
+    assert classify(title, original)["category_id"] == expected

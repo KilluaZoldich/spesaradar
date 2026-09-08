@@ -147,3 +147,40 @@ def test_robots_and_304(monkeypatch):
 
 def test_retry_after_http_date():
     assert retry_seconds("Wed, 31 Dec 2098 23:59:59 GMT") > 3600
+
+
+def test_redirect_releases_connection_before_new_host_robots(monkeypatch):
+    monkeypatch.setattr("app.security.fetch.time.sleep", lambda _: None)
+    active = []
+
+    class ExclusiveStream(httpx.ByteStream):
+        def close(self):
+            active.clear()
+            super().close()
+
+    def handler(request):
+        # Models the production pool with exactly one connection.
+        assert not active, "Redirect stream still occupies the connection"
+        active.append(str(request.url))
+        if request.url.host == "www.lidl.it":
+            return httpx.Response(
+                302,
+                headers={"Location": "https://www.eurospin.it/promozioni/"},
+                stream=ExclusiveStream(b""),
+            )
+        return httpx.Response(
+            200,
+            stream=ExclusiveStream(
+                b"User-agent: *\nAllow: /\n"
+                if request.url.path == "/robots.txt"
+                else b"catalog"
+            ),
+        )
+
+    m = manifests()["lidl-national"].model_copy(
+        update={"allowed_domains": ["www.lidl.it", "www.eurospin.it"]}
+    )
+    f = Fetcher(m, httpx.MockTransport(handler))
+    assert f.request("https://www.lidl.it/")[3] == b"catalog"
+    assert f.count == 3
+    f.close()

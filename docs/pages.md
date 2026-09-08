@@ -44,3 +44,7 @@ Per raccogliere da ambiente isolato: configurare `SPESARADAR_DB` in una cartella
 ## Verifica eseguita
 
 Prima raccolta e deploy remoti riusciti: [run](https://github.com/KilluaZoldich/spesaradar/actions/runs/34195536421), 450 prodotti reali da entrambe le insegne, artifact compresso 188.518 byte e retention 1 giorno. [Rapporto ed evidenze](verification.md#pubblicazione-remota--8-settembre-2026). Test del sito: `PAGES_TEST_URL=https://killuazoldich.github.io/spesaradar/ npm --prefix apps/web run test:pages`.
+
+## Copertura ampliata (8 settembre 2026)
+
+Lidl ed Eurospin restano ambiti nazionali; MD è disponibile esclusivamente per la sede verificata Milano, via Rubens 8. Il connettore risolve ogni volta il volantino dalla pagina ufficiale della sede. Nessuna località viene assegnata automaticamente all’utente. Le altre insegne esaminate hanno stati di supporto espliciti e non sono selezionabili. Il nuovo catalogo MD conserva date sconosciute, condizioni carta e limiti di freschezza. [Audit dettagliato](source-audit.md).

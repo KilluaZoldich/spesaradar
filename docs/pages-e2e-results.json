@@ -24,7 +24,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "/Users/metin/Projects/spesaradar/apps/web/test-results",
+        "outputDir": "/Users/metin/Projects/spesaradar/.private/pages-test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -88,12 +88,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 961,
+                  "duration": 870,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T06:41:26.332Z",
+                  "startTime": "2026-09-08T07:39:05.262Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -122,12 +122,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 538,
+                  "duration": 506,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T06:41:27.523Z",
+                  "startTime": "2026-09-08T07:39:06.344Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -156,12 +156,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1293,
+                  "duration": 1217,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T06:41:28.066Z",
+                  "startTime": "2026-09-08T07:39:06.856Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -173,15 +173,49 @@
           "file": "catalog.spec.ts",
           "line": 84,
           "column": 5
+        },
+        {
+          "title": "Pages: nuova sede MD, carta e passaggio rapido alle offerte future",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1307,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T07:39:08.080Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "30aa42b97d8966d0c2dc-38695fac0365cdb5cca0",
+          "file": "catalog.spec.ts",
+          "line": 109,
+          "column": 5
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-08T06:41:26.016Z",
-    "duration": 3380.034,
-    "expected": 3,
+    "startTime": "2026-09-08T07:39:04.923Z",
+    "duration": 4495.682,
+    "expected": 4,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

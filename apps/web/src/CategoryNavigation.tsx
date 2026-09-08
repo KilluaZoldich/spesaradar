@@ -96,23 +96,28 @@ export default function CategoryNavigation({
           <Grid2X2 size={17} aria-hidden="true" />
           Tutti <span>{Object.values(counts).reduce((a, b) => a + b, 0)}</span>
         </button>
-        {ordered.map((c) => (
-          <button
-            key={c.id}
-            className={selected.includes(c.id) ? "active" : ""}
-            aria-pressed={selected.includes(c.id)}
-            onClick={() =>
-              onChange(
-                selected.includes(c.id)
-                  ? selected.filter((id) => id !== c.id)
-                  : [...selected, c.id],
-              )
-            }
-          >
-            <CategoryIcon id={c.id} />
-            {shortCategory(c.label)} <span>{counts[c.id] || 0}</span>
-          </button>
-        ))}
+        {ordered
+          .filter(
+            (c) =>
+              expanded || (counts[c.id] || 0) > 0 || selected.includes(c.id),
+          )
+          .map((c) => (
+            <button
+              key={c.id}
+              className={selected.includes(c.id) ? "active" : ""}
+              aria-pressed={selected.includes(c.id)}
+              onClick={() =>
+                onChange(
+                  selected.includes(c.id)
+                    ? selected.filter((id) => id !== c.id)
+                    : [...selected, c.id],
+                )
+              }
+            >
+              <CategoryIcon id={c.id} />
+              {shortCategory(c.label)} <span>{counts[c.id] || 0}</span>
+            </button>
+          ))}
       </nav>
       <button
         className="all-categories"

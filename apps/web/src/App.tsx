@@ -66,39 +66,58 @@ export class ErrorBoundary extends Component<
 }
 function SourceStatus({ states }: { states: SourceState[] }) {
   return (
-    <div className="source-status" aria-live="polite">
-      {states.map((s) => (
-        <div
-          key={s.source_id}
-          className={
-            ["failed", "blocked"].includes(s.state) ? "source-error" : ""
-          }
-        >
-          <span className={"status-dot " + s.state} />
-          <strong>{s.name}</strong>
-          <span>
-            {stages[s.stage || s.state] || s.state}
-            {s.last_success_at && s.state !== "running"
-              ? ` · ${new Intl.DateTimeFormat("it-IT", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome" }).format(new Date(s.last_success_at))}`
-              : ""}
-          </span>
-          {s.message &&
-            (["failed", "blocked"].includes(s.state) ? (
-              <small>{s.message}</small>
-            ) : (
-              <details className="source-details">
-                <summary aria-label={`Dettagli aggiornamento ${s.name}`}>
-                  Dettagli
-                </summary>
-                <p>{s.message}</p>
-              </details>
-            ))}
-        </div>
-      ))}
-    </div>
+    <details
+      className="source-summary"
+      open={
+        states.some((s) =>
+          ["failed", "blocked", "running", "queued"].includes(s.state),
+        ) || undefined
+      }
+    >
+      <summary>
+        <span className="status-dot" />
+        {states.some((s) => ["failed", "blocked"].includes(s.state))
+          ? "Alcuni supermercati non sono aggiornabili"
+          : states.some((s) => ["running", "queued"].includes(s.state))
+            ? "Aggiornamento in corso"
+            : "Aggiornamenti e copertura"}
+        <ChevronDown size={15} />
+      </summary>
+      <div className="source-status" aria-live="polite">
+        {states.map((s) => (
+          <div
+            key={s.source_id}
+            className={
+              ["failed", "blocked"].includes(s.state) ? "source-error" : ""
+            }
+          >
+            <span className={"status-dot " + s.state} />
+            <strong>{s.name}</strong>
+            <span>
+              {stages[s.stage || s.state] || s.state}
+              {s.last_success_at && s.state !== "running"
+                ? ` · ${new Intl.DateTimeFormat("it-IT", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome" }).format(new Date(s.last_success_at))}`
+                : ""}
+            </span>
+            {s.message &&
+              (["failed", "blocked"].includes(s.state) ? (
+                <small>{s.message}</small>
+              ) : (
+                <details className="source-details">
+                  <summary aria-label={`Dettagli aggiornamento ${s.name}`}>
+                    Dettagli
+                  </summary>
+                  <p>{s.message}</p>
+                </details>
+              ))}
+          </div>
+        ))}
+      </div>
+    </details>
   );
 }
 export default function App() {
+  const [targetQuery, setTargetQuery] = useState("");
   const [maxSelections, setMaxSelections] = useState(5);
   const [targets, setTargets] = useState<Target[]>([]),
     [categories, setCategories] = useState<{ id: string; label: string }[]>([]),
@@ -196,6 +215,16 @@ export default function App() {
       window.removeEventListener("pageshow", resume);
     };
   }, []);
+  useEffect(() => {
+    if (!initialized || !editing) return;
+    const controller = new AbortController();
+    api<{ items: Target[] }>("/targets", { signal: controller.signal })
+      .then((result) => {
+        if (!controller.signal.aborted) setTargets(result.items);
+      })
+      .catch(() => {}); // The existing selection remains usable if this optional read fails.
+    return () => controller.abort();
+  }, [editing, initialized, tick]);
   const params = () => {
     const p = new URLSearchParams();
     selected.forEach((id) => p.append("target_ids", id));
@@ -402,6 +431,21 @@ export default function App() {
       categories.map((c) => [c.id, c.label]),
     ),
     activeTargets = targets.filter((t) => selected.includes(t.id));
+  const retailerMap = Object.fromEntries(retailers.map((r) => [r.id, r.name]));
+  const selectedRetailers = [
+    ...new Map(activeTargets.map((t) => [t.retailer_id, t])).values(),
+  ];
+  const targetKinds: Record<string, string> = {
+    national: "Catalogo nazionale",
+    store: "Punto vendita",
+    regional: "Catalogo regionale",
+    online: "Offerte online",
+  };
+  const filteredTargets = targets.filter((t) =>
+    (t.retailer_name + " " + t.label)
+      .toLocaleLowerCase("it")
+      .includes(targetQuery.toLocaleLowerCase("it").trim()),
+  );
   const busy = refreshing || !!refreshId;
   const anyFilters =
     !!query ||
@@ -428,12 +472,6 @@ export default function App() {
         <span className="private-label">La tua spesa, più chiara.</span>
       </header>
       <main className="app-main" id="contenuto" tabIndex={-1}>
-        {STATIC_CATALOG && (
-          <p className="publication-note">
-            Versione online · Offerte aggiornate periodicamente. Raccolta
-            ogni 12 ore circa, con possibili ritardi.
-          </p>
-        )}
         {offline && (
           <div className="banner warning" role="status">
             <WifiOff size={18} /> Sei offline. La verifica delle offerte
@@ -469,8 +507,7 @@ export default function App() {
                 <ShoppingBasket size={30} strokeWidth={1.5} />
               </span>
               <h1>
-                La spesa comincia
-                <br />
+                La spesa comincia <br />
                 dalle offerte giuste.
               </h1>
               <p>
@@ -483,8 +520,41 @@ export default function App() {
               <p className="muted">
                 Seleziona uno o più cataloghi da consultare insieme.
               </p>
+              <label className="search-input selection-search">
+                <Search size={18} aria-hidden="true" />
+                <span className="sr-only">Cerca supermercato o sede</span>
+                <input
+                  value={targetQuery}
+                  onChange={(e) => setTargetQuery(e.target.value)}
+                  placeholder="Cerca insegna o sede…"
+                  maxLength={120}
+                />
+                {targetQuery && (
+                  <button
+                    aria-label="Cancella ricerca negozi"
+                    onClick={() => setTargetQuery("")}
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </label>
+              <div className="selection-caption">
+                <span>
+                  {
+                    new Set(
+                      targets
+                        .filter((t) => t.enabled)
+                        .map((t) => t.retailer_id),
+                    ).size
+                  }{" "}
+                  insegne con offerte consultabili
+                </span>
+                <span>
+                  {draft.length}/{maxSelections} selezionati
+                </span>
+              </div>
               <div className="target-list">
-                {targets.map((t) => (
+                {filteredTargets.map((t) => (
                   <label
                     key={t.id}
                     className={
@@ -511,20 +581,47 @@ export default function App() {
                     </span>
                     <span>
                       <strong>{t.retailer_name}</strong>
-                      <span className="target-kind">Catalogo nazionale</span>
-                      <small>Adesione del negozio non verificata</small>
+                      <span className="target-kind">
+                        {targetKinds[t.type] || t.type}
+                      </span>
+                      <small>
+                        {t.type === "national"
+                          ? "Adesione del negozio non verificata"
+                          : t.label}
+                      </small>
+                      {t.availability && (
+                        <span className="target-availability">
+                          {t.availability.current > 0
+                            ? `${t.availability.current} oggi`
+                            : "Nessuna offerta oggi"}
+                          {t.availability.future > 0
+                            ? ` · ${t.availability.future} in arrivo`
+                            : ""}
+                        </span>
+                      )}
                     </span>
                     <Check className="selection-check" size={20} />
                   </label>
                 ))}
               </div>
+              {initialized && !filteredTargets.length && (
+                <p className="target-empty">
+                  Nessun catalogo verificato per “{targetQuery}”.{" "}
+                  <button
+                    className="text-button"
+                    onClick={() => setTargetQuery("")}
+                  >
+                    Mostra tutte le selezioni
+                  </button>
+                </p>
+              )}
               {!initialized && <div className="skeleton selection-skeleton" />}
               <div className="scope-note">
                 <Info size={18} />
                 <p>
-                  Questi cataloghi mostrano le promozioni del sito nazionale.
-                  Verifica l’adesione del tuo punto vendita nella fonte
-                  ufficiale.
+                  Le offerte nazionali non confermano l’adesione di ogni
+                  negozio. Per una sede specifica, scegli soltanto l’indirizzo
+                  che ti interessa. La copertura è parziale.
                 </p>
               </div>
               <button
@@ -570,19 +667,26 @@ export default function App() {
                 </p>
                 <div className="selected-stores">
                   <Store size={17} />
-                  {activeTargets.map((t) => t.retailer_name).join(" + ")}
-                  <span>Cataloghi nazionali</span>
+                  {selectedRetailers.map((t) => t.retailer_name).join(" + ")}
+                  <span>
+                    {activeTargets.some((t) => t.type !== "national")
+                      ? "Ambiti scelti da te"
+                      : "Cataloghi nazionali"}
+                  </span>
                 </div>
               </div>
               <div className="heading-actions">
                 <button
                   className="secondary"
+                  aria-label="Modifica negozi"
                   onClick={() => {
                     setDraft(selected);
+                    setTargetQuery("");
                     setEditing(true);
                   }}
                 >
-                  Modifica negozi
+                  <span className="desktop-label">Modifica negozi</span>
+                  <span className="mobile-label">Negozi</span>
                 </button>
                 <button
                   className="icon-button"
@@ -670,6 +774,31 @@ export default function App() {
                     )}
                   </button>
                 </div>
+                {selectedRetailers.length > 1 && (
+                  <nav
+                    className="retailer-shortcuts"
+                    aria-label="Filtra per supermercato"
+                  >
+                    <button
+                      aria-pressed={!retailer}
+                      onClick={() => setRetailer("")}
+                    >
+                      <span className="desktop-label">
+                        Tutti i supermercati
+                      </span>
+                      <span className="mobile-label">Tutti</span>
+                    </button>
+                    {selectedRetailers.map((t) => (
+                      <button
+                        key={t.retailer_id}
+                        aria-pressed={retailer === t.retailer_id}
+                        onClick={() => setRetailer(t.retailer_id)}
+                      >
+                        {t.retailer_name}
+                      </button>
+                    ))}
+                  </nav>
+                )}
                 <CategoryNavigation
                   categories={categories}
                   counts={catalog?.category_counts || {}}
@@ -686,7 +815,7 @@ export default function App() {
                         onChange={(e) => setRetailer(e.target.value)}
                       >
                         <option value="">Tutti i selezionati</option>
-                        {activeTargets.map((t) => (
+                        {selectedRetailers.map((t) => (
                           <option key={t.id} value={t.retailer_id}>
                             {t.retailer_name}
                           </option>
@@ -781,16 +910,29 @@ export default function App() {
                     <button
                       className={validity === "current" ? "active" : ""}
                       aria-pressed={validity === "current"}
+                      aria-label="Disponibili oggi"
                       onClick={() => setValidity("current")}
                     >
-                      Disponibili oggi
+                      <span className="desktop-label">Disponibili oggi</span>
+                      <span className="mobile-label">Oggi</span>
+                      {catalog?.period_counts && (
+                        <span className="period-count">
+                          {catalog.period_counts.current}
+                        </span>
+                      )}
                     </button>
                     <button
                       className={validity === "future" ? "active" : ""}
                       aria-pressed={validity === "future"}
+                      aria-label="In arrivo"
                       onClick={() => setValidity("future")}
                     >
                       In arrivo
+                      {catalog?.period_counts && (
+                        <span className="period-count">
+                          {catalog.period_counts.future}
+                        </span>
+                      )}
                     </button>
                   </div>
                   <label className="sort-label">
@@ -855,6 +997,7 @@ export default function App() {
                         <OfferCard
                           key={o.id}
                           offer={o}
+                          retailerName={retailerMap[o.retailer_id]}
                           category={shortCategory(
                             categoryMap[o.category_id] || "Altri prodotti",
                           )}
@@ -891,6 +1034,16 @@ export default function App() {
                           ? "Prova un’altra ricerca o azzera i filtri."
                           : "Consulta lo stato dei supermercati qui sopra. Le promozioni future si trovano in “In arrivo”."}
                     </p>
+                    {validity === "current" &&
+                      (catalog?.period_counts?.future || 0) > 0 && (
+                        <button
+                          className="primary"
+                          onClick={() => setValidity("future")}
+                        >
+                          Vedi {catalog!.period_counts!.future} offerte in
+                          arrivo <ArrowRight size={18} />
+                        </button>
+                      )}
                   </div>
                 )}
               </>
@@ -909,6 +1062,12 @@ export default function App() {
         )}
       </main>
       <footer>
+        {STATIC_CATALOG && (
+          <p className="publication-note">
+            Versione online · Offerte aggiornate periodicamente. Raccolta ogni
+            12 ore circa, con possibili ritardi.
+          </p>
+        )}
         <span>SpesaRadar</span>
         <p>
           Fonti ufficiali, consultazione personale. Disponibilità a scaffale e
@@ -942,7 +1101,7 @@ export default function App() {
           <div className="detail-content">
             <div className="detail-top">
               <span className="retailer">
-                {detail.retailer_id === "lidl" ? "Lidl" : "Eurospin"}
+                {retailerMap[detail.retailer_id] || detail.retailer_id}
               </span>
               <button
                 className="icon-button"

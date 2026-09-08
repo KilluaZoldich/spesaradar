@@ -86,6 +86,7 @@ test("Pages live: accessibilità e snapshot senza capture private", async ({
   request,
   baseURL,
 }) => {
+  await page.setViewportSize({ width: 1504, height: 1046 });
   const { default: AxeBuilder } =
     await import("../../apps/web/node_modules/@axe-core/playwright/dist/index.mjs");
   await select(page);
@@ -101,5 +102,72 @@ test("Pages live: accessibilità e snapshot senza capture private", async ({
   expect(
     snapshot.records.every((r: any) => r.offer.data_origin === "official_live"),
   ).toBe(true);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "../../docs/pages-desktop.png" });
+});
+
+test("Pages: nuova sede MD, carta e passaggio rapido alle offerte future", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto("./");
+  await page.getByLabel("Cerca supermercato o sede").fill("Rubens");
+  await expect(page.getByRole("checkbox")).toHaveCount(1);
+  await page.getByRole("checkbox", { name: /MD Punto vendita MILANO/ }).check();
+  await page.getByRole("button", { name: "Cancella ricerca negozi" }).click();
+  await page
+    .getByRole("checkbox", { name: /Eurospin Catalogo nazionale/ })
+    .check();
+  await page.getByRole("checkbox", { name: /Lidl Catalogo nazionale/ }).check();
+  await page.screenshot({ path: "../../docs/selection-expanded-mobile.png" });
+  await page
+    .getByRole("button", { name: "Cerca offerte", exact: true })
+    .click();
+  const nav = page.getByRole("navigation", { name: "Filtra per supermercato" });
+  await nav.getByRole("button", { name: "MD", exact: true }).click();
+  await expect(page.locator(".offer-card").first()).toBeVisible();
+  expect(await page.locator(".offer-card .retailer").allTextContents()).toEqual(
+    expect.arrayContaining(["MD"]),
+  );
+  expect(
+    (await page.locator(".offer-card .scope-caption").allTextContents()).every(
+      (s) => s.includes("RUBENS"),
+    ),
+  ).toBe(true);
+  await page.getByRole("button", { name: "Filtri", exact: true }).click();
+  await page
+    .getByLabel("Carta fedeltà", { exact: true })
+    .selectOption("required");
+  await expect(page.locator(".offer-card").first()).toContainText(
+    "Buona Spesa Card",
+  );
+  await page.getByRole("button", { name: "Filtri", exact: true }).click();
+  const { default: AxeBuilder } =
+    await import("../../apps/web/node_modules/@axe-core/playwright/dist/index.mjs");
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({ path: "../../docs/md-mobile.png" });
+  await page
+    .locator(".offer-card")
+    .first()
+    .screenshot({ path: "../../docs/md-offer.png" });
+  await page
+    .getByRole("button", { name: "Rimuovi filtro carta", exact: true })
+    .click();
+  await nav.getByRole("button", { name: "Eurospin", exact: true }).click();
+  const future = page.getByRole("button", {
+    name: /Vedi \d+ offerte in arrivo/,
+  });
+  await expect(future).toBeVisible();
+  await future.click();
+  await expect(page.locator(".offer-card").first()).toBeVisible();
+  expect(await page.locator(".offer-card .retailer").allTextContents()).toEqual(
+    expect.arrayContaining(["Eurospin"]),
+  );
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.reload();
+  await expect(page.locator(".selected-stores")).toContainText("MD");
 });

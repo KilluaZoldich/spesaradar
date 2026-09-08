@@ -1,0 +1,34 @@
+{
+  "source_id": "md-151",
+  "retailer_id": "md",
+  "name": "MD",
+  "source_type": "html",
+  "parser_version": "1",
+  "allowed_domains": [
+    "www.mdspa.it",
+    "volantino.mdspa.it",
+    "service-volantino.mdspa.it"
+  ],
+  "entry_urls": [
+    "https://www.mdspa.it/sfogliatore/?id_pv=151"
+  ],
+  "audit_status": "partial",
+  "enabled": true,
+  "scope_type": "store",
+  "scope_label": "MILANO (MI) - VIA RUBENS, 8",
+  "capabilities": [
+    "products",
+    "store_scope"
+  ],
+  "max_requests": 10,
+  "min_interval_seconds": 3,
+  "deadline_seconds": 180,
+  "refresh_seconds": 43200,
+  "cooldown_seconds": 1800,
+  "suspend_on": [
+    403,
+    401,
+    429
+  ],
+  "timeout_seconds": 30
+}

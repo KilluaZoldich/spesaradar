@@ -7,6 +7,7 @@ from urllib.parse import urljoin
 from app.adapters.base import Batch, StructuralError
 from app.adapters.eurospin import EurospinAdapter
 from app.adapters.lidl import LidlAdapter
+from app.adapters.md import MDAdapter
 from app.config import manifests
 from app.jobs.queue import claim, fail, heartbeat, publish, schedule
 from app.security.fetch import Fetcher, FetchError, retention
@@ -17,9 +18,19 @@ stop = threading.Event()
 
 
 def collect(m, fetcher, stage):
-    adapter = LidlAdapter() if m.retailer_id == "lidl" else EurospinAdapter()
+    adapters = {"lidl": LidlAdapter, "eurospin": EurospinAdapter, "md": MDAdapter}
+    if m.retailer_id not in adapters:
+        raise StructuralError("Nessun connettore verificato per questa insegna")
+    adapter = adapters[m.retailer_id]()
     entry = m.entry_urls[0]
     html, cid, url = fetcher.fetch(entry)
+    if isinstance(adapter, MDAdapter):
+        catalog_url = adapter.resolve(html, m)
+        html, cid, url = fetcher.fetch(catalog_url)
+        stage("parse")
+        batch = adapter.extract(html, url, cid, m)
+        batch.visited.insert(0, entry)
+        return batch
     if m.retailer_id != "lidl":
         stage("parse")
         return adapter.extract(html, url, cid)

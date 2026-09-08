@@ -1,6 +1,6 @@
 # Rapporto di verifica — 8 settembre 2026
 
-**Stato: rilascio locale parziale, con percorso centrale funzionante e due insegne live.** Non è una dichiarazione di copertura nazionale completa o idoneità alla pubblicazione. Nessun commit, push o deploy esterno effettuato.
+**Stato corrente: rilascio parziale, con tre connettori reali e versione GitHub Pages.** Le sezioni iniziali documentano il primo rilascio locale; pubblicazione e ampliamento sono riportati in fondo. I limiti storici su numero di insegne, sedi e pubblicazione vanno letti con questi aggiornamenti. Non è una dichiarazione di copertura nazionale completa.
 
 ## Ambiente
 
@@ -84,3 +84,39 @@ GitHub Pages attivato in HTTPS e workflow Actions riuscito: [esecuzione verifica
 **98 test backend**, **11 test frontend** e **3 percorsi browser Pages** passati; questi ultimi eseguiti sia su build statica locale priva di API, sia sull’URL HTTPS pubblico. [Output remoto](pages-browser-tests.txt), [report JSON](pages-e2e-results.json), [desktop](pages-desktop.png), [mobile](pages-mobile.png). IAB usato anche per verificare selezione doppia, filtro Carne nella build statica, filtro Dolci e controllo della pubblicazione sul sito remoto. Nessuna richiesta a `/api/` o ai supermercati dal browser nel percorso testato; nessun errore JavaScript. Axe senza violazioni automatiche nel catalogo remoto, layout 360 px senza overflow. Test specifici verificano scadenze, soglia 48 ore, condizioni sconosciute, confronto di basi, cursori e riuso della pubblicazione.
 
 Il primo tentativo di workflow è stato rifiutato per un riferimento al contesto `runner` nell’ambiente del job; corretto con un percorso relativo isolato. Il successivo avvio ha completato raccolta, test, build e deploy. La modalità pubblica conserva il catalogo normalizzato come stato tra esecuzioni, non un worker sempre acceso: [architettura e limiti Pages](pages.md). L’accessibilità da GitHub è verificata per questa esecuzione, non garantita per ogni futuro cambio dei siti.
+
+## Ampliamento e navigazione — 8 settembre 2026
+
+Tre insegne: Lidl ed Eurospin nei rispettivi ambiti nazionali, **MD esclusivamente per Milano, via Rubens 8**. Nessuna sede scelta per conto dell’utente. MD è stato verificato dalla pagina ufficiale della sede fino al catalogo JSON, alle offerte persistenti e alle schede della build Pages. 307 righe osservate, 106 candidati, un duplicato coerente, **105 offerte distinte pubblicabili**; 201 righe escluse per ambito, base prezzo, periodo o condizioni non interpretabili. La verifica locale del nuovo connettore ha richiesto 7 richieste e 10,98 s, senza browser o OCR. Snapshot locale: 555 offerte complessive, incluse le future.
+
+[Campione MD di 50 offerte](md-sample.json): tutti i 105 record pubblicati sono stati confrontati con i campi del JSON decodificato indipendentemente; il campione salvato copre pagine, categorie, carta e basi differenti. Controllo visivo separato della prima pagina grafica. **Non completato il gate di 50 drawer renderizzati verificati manualmente**. Le date MD non sono confermate dalla pipeline; condizioni parziali e limite di freschezza 48 ore rimangono visibili. I quattro altri candidati del nuovo ciclo non sono stati abilitati: [audit](source-audit.md).
+
+| Verifica eseguita | Esito |
+| --- | --- |
+| `.venv/bin/pytest -q` | **125 passati** in 0,97 s; i due warning upstream già descritti |
+| `.venv/bin/ruff check backend scripts` | Passato |
+| `npm --prefix apps/web test` | **14 passati** in 3 file |
+| Build statica `VITE_STATIC_CATALOG=true VITE_BASE_PATH=/spesaradar/ npm --prefix apps/web run build` | TypeScript e Vite riusciti |
+| Ricostruzione Compose completa, con la variante Docker documentata sopra | Migrazioni exit 0, API/worker/web avviati, API healthy prima del web |
+| `npm --prefix apps/web run test:e2e` contro Docker 8080 | **9 passati** in 8,3 s; [report](e2e-results.json) |
+| `npm --prefix apps/web run test:pages` contro build statica 8082 | **4 passati**, compreso MD, carta e passaggio da zero offerte oggi alle future |
+
+La prima esecuzione contemporanea delle due suite browser ha prodotto una collisione nella directory delle tracce, con errore ENOENT alla chiusura del contesto. Separato `outputDir` della suite Pages; rieseguita la suite locale completa con tutti e 9 i test passati. Non è stata nascosta una regressione applicativa.
+
+Nuove regressioni: prezzo MD con carta distinto dal prezzo ordinario, peso variabile senza confezione inventata, peso sgocciolato senza confronto implicito, cambio sede bloccato, meccaniche non ammesse escluse; chiusura della risposta prima del controllo robots di un nuovo host per evitare il blocco del pool HTTP; classificatore versione 5; conteggi di periodo e disponibilità con scadenze, ricerca e filtri. Cache e coda esistenti restano operative.
+
+### Esperienza e verifica visiva
+
+Ricerca insegna/sede, conteggi oggi/in arrivo nella selezione, pulsante mobile sempre raggiungibile, filtri rapidi per supermercato, categorie senza risultati disponibili nell’espansione, passaggio diretto alle offerte future e stati fonte compatti. Indirizzo e requisito Buona Spesa Card compaiono sulle schede MD; nomi e ambiti non sono più limitati a due insegne nel frontend.
+
+Browser integrato temporaneamente indisponibile perché il Mac era bloccato e lo sblocco automatico non riusciva. Nessun tentativo di aggirare il blocco. Usata la suite Playwright prevista dal brief contro l’app realmente avviata; screenshot aperti con `view_image` e confrontati col concept già adottato, senza nuova generazione di immagini.
+
+| Controllo visivo | Esito / modifica intenzionale |
+| --- | --- |
+| Gerarchia e testo | Articolo/prezzo preservati; spazio corretto nel titolo mobile; istruzioni di pubblicazione spostate nel footer |
+| Spazi e mobile | Intestazione compatta, ricerca e comandi touch; viewport 360×800 senza overflow della pagina |
+| Navigazione | Tre insegne distinguibili, indirizzo MD esplicito, categorie con risultati prioritarie |
+| Tipografia e colori | Manrope locale, verde petrolio e accento condizioni coerenti con il design precedente; nessuna imitazione dei marchi |
+| Schede e accessibilità | Prezzo carta verificato e visibile, dettaglio/focus conservati; Axe senza violazioni automatiche nei percorsi verificati, non certificazione WCAG |
+
+Evidenze: [selezione mobile](selection-expanded-mobile.png), [MD mobile](md-mobile.png), [scheda MD](md-offer.png), [desktop Pages](pages-desktop.png). Nessuna immagine del prodotto inventata o riutilizzata. Restano i limiti sulle condizioni non integralmente estraibili, sui social, sui buoni e sulla copertura descritti nell’audit.

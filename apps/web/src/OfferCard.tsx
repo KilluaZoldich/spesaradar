@@ -43,7 +43,11 @@ export function Conditions({
       {o.conditions.loyalty_required === true && (
         <span className="badge loyalty">
           <Ticket size={14} /> Solo con{" "}
-          {o.retailer_id === "lidl" ? "Lidl Plus" : "carta fedeltà"}
+          {o.retailer_id === "lidl"
+            ? "Lidl Plus"
+            : o.retailer_id === "md"
+              ? "Buona Spesa Card"
+              : "carta fedeltà"}
         </span>
       )}
       {o.conditions.minimum_pack_count !== null &&
@@ -80,18 +84,18 @@ export default function OfferCard({
   offer: o,
   category,
   onOpen,
+  retailerName,
 }: {
   offer: Offer;
   category: string;
+  retailerName?: string;
   onOpen: () => void;
 }) {
   const unit = o.price.published_unit_price || o.price.calculated_unit_price;
   return (
     <article className="offer-card">
       <div className="card-top">
-        <span className="retailer">
-          {o.retailer_id === "lidl" ? "Lidl" : "Eurospin"}
-        </span>
+        <span className="retailer">{retailerName || o.retailer_id}</span>
         <span className="category-label">{category}</span>
         <span className="category-mark" aria-hidden="true">
           <CategoryIcon id={o.category_id} size={23} />
@@ -138,9 +142,7 @@ export default function OfferCard({
         </p>
       </div>
       <div className="card-bottom">
-        <p className="scope-caption">
-          Catalogo nazionale · adesione del negozio non verificata
-        </p>
+        <p className="scope-caption">{o.scope.label}</p>
         {o.freshness === "stale" && (
           <p className="warning-text">Dato non aggiornato di recente</p>
         )}

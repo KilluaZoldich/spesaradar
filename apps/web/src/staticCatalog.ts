@@ -24,6 +24,34 @@ export type Snapshot = {
     withdrawn: boolean;
   }[];
 };
+export function availableTargets(snapshot: Snapshot, now = Date.now()) {
+  const availability = Object.fromEntries(
+    snapshot.targets.items.map((t) => [t.id, { current: 0, future: 0 }]),
+  );
+  for (const { offer: o, withdrawn } of snapshot.records) {
+    const age = now - Date.parse(o.last_verified_at);
+    if (
+      !availability[o.source_id] ||
+      withdrawn ||
+      o.quality === "quarantined" ||
+      o.data_origin !== "official_live" ||
+      !Number.isFinite(age) ||
+      age > 48 * 3600000 ||
+      now >= Date.parse(o.validity.end_at_exclusive || "")
+    )
+      continue;
+    availability[o.source_id][
+      now < Date.parse(o.validity.start_at || "") ? "future" : "current"
+    ]++;
+  }
+  return {
+    ...snapshot.targets,
+    items: snapshot.targets.items.map((t) => ({
+      ...t,
+      availability: availability[t.id],
+    })),
+  };
+}
 export class CatalogError extends Error {
   constructor(
     public code: string,
@@ -75,6 +103,7 @@ export function queryCatalog(
   const counts = Object.fromEntries(
     snapshot.categories.items.map((c) => [c.id, 0]),
   );
+  const periodCounts = { current: 0, future: 0 };
   const items: Snapshot["records"][number]["offer"][] = [];
   for (const record of snapshot.records) {
     const original = record.offer;
@@ -104,11 +133,6 @@ export function queryCatalog(
         : start !== null
           ? "active"
           : "unknown";
-    if (
-      (validity === "current" && temporal_status === "future") ||
-      (validity === "future" && temporal_status !== "future")
-    )
-      continue;
     if (retailers.length && !retailers.includes(original.retailer_id)) continue;
     const words = normalize(
       original.title + " " + (original.brand || ""),
@@ -141,6 +165,13 @@ export function queryCatalog(
     if (
       sort === "price" &&
       (original.price.basis !== basis || (c.minimum_pack_count || 0) > 1)
+    )
+      continue;
+    if (!categories.length || categories.includes(original.category_id))
+      periodCounts[temporal_status === "future" ? "future" : "current"]++;
+    if (
+      (validity === "current" && temporal_status === "future") ||
+      (validity === "future" && temporal_status !== "future")
     )
       continue;
     counts[original.category_id] = (counts[original.category_id] || 0) + 1;
@@ -215,6 +246,7 @@ export function queryCatalog(
           )
         : null,
     category_counts: counts,
+    period_counts: periodCounts,
     catalog_revision: revision,
     server_time: new Date(now).toISOString(),
     source_states: snapshot.sources.filter((s) => ids.includes(s.source_id)),
@@ -283,7 +315,7 @@ export async function staticApi<T>(
   const [route, query = ""] = path.split("?");
   const p = new URLSearchParams(query);
   let result: unknown;
-  if (route === "/targets") result = snapshot.targets;
+  if (route === "/targets") result = availableTargets(snapshot, clock());
   else if (route === "/retailers") result = snapshot.retailers;
   else if (route === "/categories") result = snapshot.categories;
   else if (route === "/offers") result = queryCatalog(snapshot, p, clock());

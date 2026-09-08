@@ -100,6 +100,21 @@ def identity(*parts) -> str:
 
 # Priority exceptions precede exact source mappings. No dietary tags inferred.
 RULES = [
+    ("stuffed-pasta", "pasta_riso_cereali", r"\b(?:tortellini|tortelloni|ravioli)\b"),
+    ("mashed-potatoes", "piatti_pronti", r"\bpure[’']? di patate\b"),
+    ("baby-diapers", "infanzia", r"\bpampers baby[ -]?dry\b"),
+    ("sliced-turkey", "salumi", r"\barrosto di tacchino\b"),
+    ("bacon-speck", "salumi", r"\b(?:bacon|speck|spianata piccante)\b"),
+    (
+        "sweet-bakery",
+        "dolci",
+        r"\b(?:pancakes?|wafer|wafers|crostata|ciambelle zuccherate|cannoli|tortina|cookie)\b",
+    ),
+    ("rusks", "pane_forno", r"\bfette biscottate\b"),
+    ("breakfast-grains", "pasta_riso_cereali", r"\b(?:fiocchi di avena|granola)\b"),
+    ("pasta-shapes", "pasta_riso_cereali", r"\b(?:orecchiette|trofie|strozzapreti)\b"),
+    ("tomato-passata", "dispensa", r"\b(?:passata di pomodoro|sugo pronto|pinoli)\b"),
+    ("personal-soap", "cura_persona", r"\bsapone liquido\b"),
     ("cleansing-paste", "cura_persona", r"\bpasta lavamani\b"),
     ("pickled-cabbage", "dispensa", r"\bcrauti\b"),
     ("cooked-sausage", "salumi", r"\bwurstel\b"),
@@ -146,7 +161,7 @@ KEYWORDS = [
     ),
     (
         "latticini_uova",
-        r"\b(?:latte|uova|uovo|yogurt|formaggio|mozzarella|burro|mascarpone|panna|grana|latticino|fermenti|grattugiato)\b",
+        r"\b(?:latte|uova|uovo|yogurt|formaggio|mozzarella|burro|mascarpone|panna|grana|latticino|fermenti|grattugiato|stracchino|albume)\b",
     ),
     (
         "dolci",
@@ -174,6 +189,12 @@ KEYWORDS = [
     ),
 ]
 EXACT = {
+    "CARNI": "carne",
+    "ORTOFRUTTA": "frutta_verdura",
+    "BEVANDE": "bevande",
+    "CURA PERSONA": "cura_persona",
+    "CURA CASA": "casa_pulizia",
+    "PETCARE": "animali",
     "Carne e pollame": "carne",
     "Carne di manzo": "carne",
     "Carne di maiale": "carne",

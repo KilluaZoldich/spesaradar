@@ -2,7 +2,7 @@
 
 Le offerte dei tuoi supermercati, già divise per categoria. Web app locale in italiano, con raccolta automatica da siti ufficiali, database persistente e nessun LLM o servizio di scraping a pagamento.
 
-**Rilascio 0.1 parziale.** Sono funzionanti due connettori reali, **Lidl Italia** ed **Eurospin**, per cataloghi nazionali. L’adesione del singolo negozio non è verificata. Copertura selettiva, condizioni non sempre integralmente disponibili, social e buoni generici non acquisiti. Nessun dato inventato viene inserito nel catalogo live. Vedi [audit delle fonti](docs/source-audit.md) e [verifica](docs/verification.md).
+**Rilascio 0.2 parziale.** Tre connettori reali: **Lidl Italia** ed **Eurospin** per cataloghi nazionali, **MD** per la sede verificata di **Milano, via Rubens 8**. I prezzi nazionali non confermano l’adesione del singolo negozio. MD non è presentato come catalogo nazionale; le date dei suoi articoli non sono confermate dalla pipeline. Copertura selettiva, condizioni non sempre integralmente disponibili, social e buoni generici non acquisiti. Nessun dato inventato viene inserito nel catalogo live. Vedi [audit delle fonti](docs/source-audit.md) e [verifica](docs/verification.md).
 
 ## Versione online
 
@@ -16,15 +16,16 @@ Prerequisiti: Docker Engine/Desktop attivo e Docker Compose v2, rete Internet pe
 docker compose up --build
 ```
 
-Apri **http://127.0.0.1:8080**. Le migrazioni terminano prima dell’API e del worker; soltanto il frontend/reverse proxy espone una porta, su loopback. Il volume `spesaradar_catalog` conserva SQLite e le capture private. L’avvio non precarica offerte: scegli Lidl e/o Eurospin e premi **Cerca offerte**. La prima raccolta può richiedere qualche minuto; i risultati vengono pubblicati per fonte dopo i controlli.
+Apri **http://127.0.0.1:8080**. Le migrazioni terminano prima dell’API e del worker; soltanto il frontend/reverse proxy espone una porta, su loopback. Il volume `spesaradar_catalog` conserva SQLite e le capture private. L’avvio non precarica offerte: scegli uno o più cataloghi supportati e premi **Cerca offerte**. La prima raccolta può richiedere qualche minuto; i risultati vengono pubblicati per fonte dopo i controlli.
 
 Per avvio in background: `docker compose up --build -d`. Per fermare: `docker compose down` (senza `-v`, che eliminerebbe il volume). Su questa macchina Docker aveva un credential helper bloccato: la variante locale documentata in [operations](docs/operations.md) usa una configurazione separata per le sole immagini pubbliche, senza modificare le credenziali personali.
 
 ## Uso
 
-- Selezione multipla salvata nel browser, con schema versionato; nessuna città presunta.
+- Selezione multipla salvata nel browser, con ricerca insegna/sede e conteggi di offerte odierne/future. Nessuna città presunta; solo sedi o ambiti dichiarati.
+- Filtri rapidi per supermercato nel catalogo; categorie con risultati mostrate per prime, tutte le altre disponibili espandendo la navigazione.
 - Catalogo comune, 18 categorie espandibili, ricerca per parole in AND, categorie multiple in OR, filtri per insegna, fedeltà e quantità minima rimovibili anche a pannello chiuso.
-- **Disponibili oggi** e **In arrivo** separano validità corrente e futura. Un catalogo futuro non è un errore: durante la verifica Eurospin esponeva la campagna dal 10 al 20 settembre.
+- **Disponibili oggi** e **In arrivo** separano validità corrente e futura. I conteggi rispettano gli altri filtri; lo stato vuoto offre un pulsante diretto alle promozioni future. Un catalogo futuro non è un errore: durante la verifica Eurospin esponeva la campagna dal 10 al 20 settembre.
 - Prezzi a confezione, kg, litro o pezzo, formato, calcolo unitario quando documentabile, condizioni visibili e dettaglio con fonte/ultima verifica. Ordinamento per prezzo solo sulla base esplicitamente scelta.
 - **Buoni e vantaggi** indica la mancata copertura. I prezzi Lidl Plus verificati restano nella vista prodotti con badge.
 - **Aggiorna offerte** riusa cache e job: cooldown minimo 30 minuti, aggiornamento dopo 12 ore. Cambiare filtro non effettua crawling. Il worker pianifica soltanto gli ambiti richiesti negli ultimi 7 giorni.

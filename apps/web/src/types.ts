@@ -2,6 +2,7 @@ export type Target = {
   id: string;
   retailer_id: string;
   retailer_name: string;
+  availability?: { current: number; future: number };
   type: string;
   label: string;
   enabled: boolean;
@@ -60,6 +61,7 @@ export type Catalog = {
   next_cursor: string | null;
   total: number;
   category_counts: Record<string, number>;
+  period_counts?: { current: number; future: number };
   catalog_revision: string;
   server_time: string;
   source_states: SourceState[];

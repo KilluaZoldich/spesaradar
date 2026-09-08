@@ -231,3 +231,29 @@ def test_recovery_exhaustion_suspends_source():
     with Session() as s:
         assert s.get(Job, job.id).state == "failed"
         assert s.get(SourceRow, job.source_id).next_allowed >= now + 86400
+
+
+def test_period_facets_and_target_availability(client):
+    from datetime import timedelta
+
+    from app.domain.catalog import utcnow
+
+    current = offer("Petto di pollo")
+    future = offer("Biscotti")
+    future.validity.start_at = utcnow() + timedelta(days=1)
+    future.validity.end_at_exclusive = utcnow() + timedelta(days=3)
+    publish_offers([current, future])
+    r = client.get(
+        "/api/v1/offers", params={"target_ids": "lidl-national", "validity": "current"}
+    ).json()
+    assert r["total"] == 1 and r["period_counts"] == {"current": 1, "future": 1}
+    r = client.get(
+        "/api/v1/offers",
+        params={"target_ids": "lidl-national", "validity": "current", "q": "biscotti"},
+    ).json()
+    assert r["total"] == 0 and r["period_counts"] == {"current": 0, "future": 1}
+    t = client.get("/api/v1/targets").json()["items"]
+    assert next(x for x in t if x["id"] == "lidl-national")["availability"] == {
+        "current": 1,
+        "future": 1,
+    }

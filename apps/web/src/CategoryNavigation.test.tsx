@@ -47,3 +47,21 @@ describe("Navigazione delle categorie", () => {
     );
   });
 });
+
+it("mostra prima categorie utili, lasciando accessibili quelle vuote", () => {
+  render(
+    <CategoryNavigation
+      categories={[
+        { id: "carne", label: "Carne" },
+        { id: "dolci", label: "Dolci" },
+      ]}
+      counts={{ carne: 0, dolci: 5 }}
+      selected={[]}
+      onChange={() => {}}
+    />,
+  );
+  expect(screen.queryByRole("button", { name: "Carne 0" })).toBeNull();
+  expect(screen.getByRole("button", { name: "Dolci 5" })).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Tutte le categorie" }));
+  expect(screen.getByRole("button", { name: "Carne 0" })).toBeVisible();
+});

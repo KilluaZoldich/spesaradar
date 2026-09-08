@@ -222,6 +222,9 @@ class Fetcher:
                         if status in [301, 302, 303, 307, 308]:
                             url = urljoin(url, response.headers.get("location", ""))
                             validate_url(url, self.m.allowed_domains)
+                            # Release the sole connection before a new host's robots
+                            # request. Keeping this stream open deadlocks the pool.
+                            response.close()
                             if not robots:
                                 self.check_robots(url)
                             break

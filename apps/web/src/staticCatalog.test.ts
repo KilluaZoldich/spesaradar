@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   queryCatalog,
+  availableTargets,
   staticApi,
   reloadSnapshot,
   type Snapshot,
@@ -98,6 +99,23 @@ const params = (extra = "") =>
     "target_ids=lidl-national&target_ids=eurospin-national&" + extra,
   );
 describe("Catalogo pubblicato su Pages", () => {
+  it("ricalcola i conteggi della selezione dopo scadenza o dati oltre soglia", () => {
+    const s = snapshot();
+    s.records[0].offer.validity.start_at = new Date(
+      now + 3600000,
+    ).toISOString();
+    s.records[1].withdrawn = true;
+    expect(availableTargets(s, now).items.map((t) => t.availability)).toEqual([
+      { current: 1, future: 1 },
+      { current: 0, future: 0 },
+    ]);
+    s.records[0].offer.validity.end_at_exclusive = null;
+    expect(
+      availableTargets(s, now + 49 * 3600000).items.every(
+        (t) => t.availability.current === 0 && t.availability.future === 0,
+      ),
+    ).toBe(true);
+  });
   it("ricerca AND e faccette rispettano categorie multiple senza perdere Animali", () => {
     const result = queryCatalog(
       snapshot(),
@@ -195,4 +213,26 @@ it("ricarica la pubblicazione dopo un minuto senza avviare raccolte", async () =
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   }
+});
+
+it("conta le offerte per periodo rispettando gli altri filtri", () => {
+  const s = snapshot();
+  const future = record("future", "eurospin-national", "carne");
+  future.offer.validity.start_at = new Date(now + 3600000).toISOString();
+  s.records = [
+    record("current"),
+    future,
+    record("cat", "eurospin-national", "animali"),
+  ];
+  const p = new URLSearchParams(
+    "target_ids=lidl-national&target_ids=eurospin-national&category_ids=carne&validity=current",
+  );
+  const result = queryCatalog(s, p, now);
+  expect(result.total).toBe(1);
+  expect(result.period_counts).toEqual({ current: 1, future: 1 });
+  p.set("retailer_ids", "eurospin");
+  expect(queryCatalog(s, p, now).period_counts).toEqual({
+    current: 0,
+    future: 1,
+  });
 });
