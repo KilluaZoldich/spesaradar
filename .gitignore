@@ -1,0 +1,16 @@
+.venv/
+.private/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.db*
+*.sqlite*
+*.tsbuildinfo
+.DS_Store
+test-results/
+playwright-report/

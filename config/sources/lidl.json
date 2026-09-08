@@ -1,0 +1,33 @@
+{
+  "source_id": "lidl-national",
+  "retailer_id": "lidl",
+  "name": "Lidl",
+  "source_type": "html",
+  "parser_version": "4",
+  "allowed_domains": [
+    "www.lidl.it"
+  ],
+  "entry_urls": [
+    "https://www.lidl.it/"
+  ],
+  "audit_status": "partial",
+  "enabled": true,
+  "scope_type": "national",
+  "scope_label": "Offerte nazionali — adesione del negozio non verificata",
+  "capabilities": [
+    "products",
+    "loyalty_prices",
+    "future_offers"
+  ],
+  "max_requests": 60,
+  "min_interval_seconds": 3,
+  "deadline_seconds": 180,
+  "refresh_seconds": 43200,
+  "cooldown_seconds": 1800,
+  "suspend_on": [
+    403,
+    401,
+    429
+  ],
+  "timeout_seconds": 30
+}

@@ -1,0 +1,32 @@
+{
+  "source_id": "eurospin-national",
+  "retailer_id": "eurospin",
+  "name": "Eurospin",
+  "source_type": "html",
+  "parser_version": "3",
+  "allowed_domains": [
+    "www.eurospin.it"
+  ],
+  "entry_urls": [
+    "https://www.eurospin.it/promozioni/"
+  ],
+  "audit_status": "partial",
+  "enabled": true,
+  "scope_type": "national",
+  "scope_label": "Offerte nazionali — adesione del negozio non verificata",
+  "capabilities": [
+    "products",
+    "future_offers"
+  ],
+  "max_requests": 4,
+  "min_interval_seconds": 3,
+  "deadline_seconds": 180,
+  "refresh_seconds": 43200,
+  "cooldown_seconds": 1800,
+  "suspend_on": [
+    403,
+    401,
+    429
+  ],
+  "timeout_seconds": 30
+}

@@ -1,0 +1,12 @@
+{
+  "/api/v1/health": 200,
+  "/api/v1/ready": 200,
+  "/api/openapi.json": 200,
+  "refresh_status": 202,
+  "dispositions": [
+    "cooldown",
+    "cooldown"
+  ],
+  "real_offers": 450,
+  "data_origin": "official_live"
+}

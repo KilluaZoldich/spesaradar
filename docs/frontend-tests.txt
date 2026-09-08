@@ -1,0 +1,13 @@
+
+> spesaradar-web@0.1.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /Users/metin/Projects/spesaradar/apps/web
+
+ ✓ src/OfferCard.test.tsx (3 tests) 132ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  07:47:36
+   Duration  1.04s (transform 52ms, setup 109ms, collect 110ms, tests 132ms, environment 418ms, prepare 51ms)

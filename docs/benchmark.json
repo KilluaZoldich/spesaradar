@@ -1,0 +1,14 @@
+{
+  "date": "2026-09-08",
+  "platform": "macOS-26.2-arm64-arm-64bit-Mach-O",
+  "python": "3.13.12",
+  "dataset": "5000 synthetic_fixture rows, one source; isolated temporary SQLite WAL",
+  "concurrency": 1,
+  "warmup_requests": 10,
+  "measured_requests": 100,
+  "page_size": 24,
+  "transport": "FastAPI TestClient in process, includes JSON response serialization",
+  "median_ms": 103.87,
+  "p95_ms": 134.3,
+  "max_ms": 142.98
+}

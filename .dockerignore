@@ -1,0 +1,9 @@
+.private
+.venv
+**/node_modules
+**/dist
+.git
+**/__pycache__
+.pytest_cache
+**/test-results
+**/playwright-report

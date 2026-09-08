@@ -1,0 +1,64 @@
+services:
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    command: ["alembic", "upgrade", "head"]
+    environment: &env
+      SPESARADAR_DB: /data/spesaradar.db
+      DISABLED_SOURCES: ${DISABLED_SOURCES:-}
+      MAX_TARGETS: ${MAX_TARGETS:-5}
+    volumes:
+      - catalog:/data
+    restart: "no"
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment: *env
+    volumes:
+      - catalog:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/ready',timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    command: ["python", "-m", "app.jobs.worker"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment: *env
+    volumes:
+      - catalog:/data
+    restart: unless-stopped
+    stop_grace_period: 200s
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,time; assert time.time()-os.path.getmtime('/data/worker.heartbeat')<90"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8080:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8080/api/v1/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+volumes:
+  catalog:
