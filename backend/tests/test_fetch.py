@@ -232,3 +232,45 @@ def test_binary_capture_limits_and_no_utf8_conversion(monkeypatch):
     assert f.fetch_bytes("https://www.lidl.it/file.pdf")[0] == b"%PDF-\xff\xfe"
     with pytest.raises(FetchError):
         f.fetch_bytes("https://www.lidl.it/file.pdf", max_bytes=4)
+
+
+def test_store_form_restricted_and_redirect_drops_body(monkeypatch):
+    monkeypatch.setattr("app.security.fetch.time.sleep", lambda _: None)
+    m = manifests()["despar-819"]
+    seen = []
+
+    def handler(req):
+        seen.append((req.method, str(req.url), req.content))
+        if req.url.path == "/robots.txt":
+            return response(body=b"User-agent: *\nAllow: /")
+        if req.method == "POST":
+            return response(302, headers={"location": "/it/offerte-per-te/"})
+        return response()
+
+    f = Fetcher(m, httpx.MockTransport(handler))
+    with pytest.raises(FetchError):
+        f.request("https://www.despar.it/unapproved", method="POST", fields={})
+    assert seen == []
+    f.request(m.selection_endpoint, method="POST", fields={"_method": "POST"})
+    assert seen[-1] == ("GET", "https://www.despar.it/it/offerte-per-te/", b"")
+    assert sum(x[0] == "POST" for x in seen) == 1
+    f.close()
+
+
+@pytest.mark.parametrize("status", [307, 308, 403, 429, 503])
+def test_store_form_no_retry_or_post_forward(monkeypatch, status):
+    monkeypatch.setattr("app.security.fetch.time.sleep", lambda _: None)
+    m = manifests()["despar-819"]
+    calls = []
+
+    def handler(req):
+        if req.url.path == "/robots.txt":
+            return response(body=b"User-agent: *\nAllow: /")
+        calls.append(str(req.url))
+        return response(status, headers={"location": "https://www.despar.it/other"})
+
+    f = Fetcher(m, httpx.MockTransport(handler))
+    with pytest.raises(FetchError):
+        f.request(m.selection_endpoint, method="POST", fields={})
+    assert calls == [m.selection_endpoint]
+    f.close()

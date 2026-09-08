@@ -1,0 +1,37 @@
+{
+  "source_id": "despar-819",
+  "retailer_id": "despar",
+  "name": "Despar / Interspar",
+  "source_type": "html",
+  "parser_version": "1",
+  "allowed_domains": [
+    "www.despar.it"
+  ],
+  "entry_urls": [
+    "https://www.despar.it/it/punto-vendita-interspar/819/carpi/"
+  ],
+  "audit_status": "partial",
+  "enabled": true,
+  "scope_type": "store",
+  "scope_label": "Interspar Carpi · 41012 · Tangenziale Bruno Losi, angolo Via Nuova Ponente",
+  "capabilities": [
+    "products",
+    "store_scope"
+  ],
+  "max_requests": 35,
+  "min_interval_seconds": 3,
+  "deadline_seconds": 180,
+  "refresh_seconds": 43200,
+  "cooldown_seconds": 1800,
+  "suspend_on": [
+    403,
+    401,
+    429
+  ],
+  "timeout_seconds": 30,
+  "connector": "despar_html",
+  "store_id": "819",
+  "campaign_title_suffix": null,
+  "selection_endpoint": "https://www.despar.it/store/stores/setStore/punto-vendita-interspar-819-carpi/819",
+  "max_catalog_pages": 20
+}

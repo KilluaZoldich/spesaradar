@@ -189,8 +189,8 @@ test("selezione doppia, carne/dolci, ricerca, condizioni, reload e focus", async
   await expect(
     page.getByRole("heading", { name: "Le tue offerte" }),
   ).toBeVisible();
-  await expect(page.locator(".selected-stores")).toContainText("Lidl");
-  await expect(page.locator(".selected-stores")).toContainText("Eurospin");
+  await expect(page.getByLabel("Filtra per supermercato")).toContainText("Lidl");
+  await expect(page.getByLabel("Filtra per supermercato")).toContainText("Eurospin");
 });
 
 test("fallimento isolato, cache immediata e nessun crawl da filtro", async ({

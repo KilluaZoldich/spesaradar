@@ -1,0 +1,36 @@
+{
+  "source_id": "famila-carpi",
+  "retailer_id": "famila",
+  "name": "Famila",
+  "source_type": "text_pdf",
+  "parser_version": "1",
+  "allowed_domains": [
+    "www.famila.it",
+    "promo.smt.cloud"
+  ],
+  "entry_urls": [
+    "https://www.famila.it/famila-nord/punti-vendita/emilia-romagna/famila-carpi"
+  ],
+  "audit_status": "partial",
+  "enabled": true,
+  "scope_type": "store",
+  "scope_label": "Famila Carpi · 41012 · Via Giovanni XXIII, 185",
+  "capabilities": [
+    "products",
+    "store_scope"
+  ],
+  "max_requests": 8,
+  "min_interval_seconds": 3,
+  "deadline_seconds": 180,
+  "refresh_seconds": 43200,
+  "cooldown_seconds": 1800,
+  "suspend_on": [
+    403,
+    401,
+    429
+  ],
+  "timeout_seconds": 30,
+  "connector": "famila_selex_pdf",
+  "store_id": "famila-carpi",
+  "campaign_title_suffix": null
+}

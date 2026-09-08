@@ -185,7 +185,35 @@ class Fetcher:
     def close(self):
         self.client.close()
 
-    def request(self, url, headers=None, robots=False, max_bytes=MAX_BYTES):
+    def request(
+        self,
+        url,
+        headers=None,
+        robots=False,
+        max_bytes=MAX_BYTES,
+        *,
+        method="GET",
+        fields=None,
+    ):
+        if method not in ["GET", "POST"] or (
+            method == "POST" and url != self.m.selection_endpoint
+        ):
+            raise FetchError("DESTINATION_BLOCKED", "Modulo di selezione non ammesso")
+        if method == "POST":
+            if (
+                not isinstance(fields, dict)
+                or len(fields) > 8
+                or any(
+                    not isinstance(k, str)
+                    or not isinstance(v, str)
+                    or len(k) > 100
+                    or len(v) > 16000
+                    for k, v in fields.items()
+                )
+            ):
+                raise FetchError("BUDGET", "Modulo oltre i limiti ammessi")
+            self.check_robots(url)
+        original_method = method
         for redirects in range(4):
             parsed = validate_url(url, self.m.allowed_domains)
             for attempt in range(3):
@@ -206,7 +234,7 @@ class Fetcher:
                 self.count += 1
                 try:
                     with self.client.stream(
-                        "GET", url, headers=headers or {}
+                        method, url, headers=headers or {}, data=fields
                     ) as response:
                         status = response.status_code
                         if status in [401, 403]:
@@ -220,6 +248,13 @@ class Fetcher:
                                 retry_seconds(response.headers.get("retry-after")),
                             )
                         if status in [301, 302, 303, 307, 308]:
+                            if method == "POST":
+                                if status not in [301, 302, 303]:
+                                    raise FetchError(
+                                        "DESTINATION_BLOCKED",
+                                        "Invio del modulo a un’altra destinazione non ammesso",
+                                    )
+                                method, fields = "GET", None
                             url = urljoin(url, response.headers.get("location", ""))
                             validate_url(url, self.m.allowed_domains)
                             # Release the sole connection before a new host's robots
@@ -263,10 +298,14 @@ class Fetcher:
                     httpx.TimeoutException,
                     httpx.NetworkError,
                 ) as exc:
-                    if attempt == 2:
+                    if attempt == 2 or original_method == "POST":
                         raise FetchError("TIMEOUT", "Fonte non raggiungibile") from exc
                 except FetchError as exc:
-                    if exc.code != "TRANSIENT" or attempt == 2:
+                    if (
+                        exc.code != "TRANSIENT"
+                        or attempt == 2
+                        or original_method == "POST"
+                    ):
                         raise
                 time.sleep(min(2**attempt + random.random(), 4))
             else:

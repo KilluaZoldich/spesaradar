@@ -138,11 +138,11 @@ UNSUPPORTED = [
         "source_url": "https://www.coopalleanza3-0.it/fare-spesa/elenco-negozi/dettaglio-negozio/3967-ipercoop-il-borgogioioso.html",
     },
     {
-        "id": "despar",
-        "name": "Despar / Interspar",
+        "id": "sigma",
+        "name": "Sigma",
         "support_status": "blocked_access",
-        "message": "Carpi 41012: Interspar di Tangenziale Bruno Losi verificato. Il lettore è accessibile, ma non tutti i servizi necessari all’estrazione; prezzi non acquisiti.",
-        "source_url": "https://www.despar.it/it/punto-vendita-interspar/819/carpi/",
+        "message": "Carpi 41012: cercanegozi escluso da robots.txt. Nessun volantino corrente acquisito; le offerte storiche non sono mostrate come attuali.",
+        "source_url": "https://www.supersigma.com/punti-vendita/",
     },
     {
         "id": "penny",

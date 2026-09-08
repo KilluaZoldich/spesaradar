@@ -165,3 +165,26 @@ def test_nonfood_and_ingredient_ambiguities(title, original, expected):
 )
 def test_md_classification(title, original, expected):
     assert classify(title, original)["category_id"] == expected
+
+
+@pytest.mark.parametrize(
+    "title,category",
+    [
+        ("PURINA GOURMET Mon Petit Filettini Tacchino Pollo", "animali"),
+        ("SELEX MACCHERONI CON SPECK E FORMAGGI SURGELATI", "piatti_pronti"),
+        ("SELEX TACCHINO AL FORNO A FETTE", "salumi"),
+        ("Cordon Bleu di pollo", "piatti_pronti"),
+        ("SELEX CIOCCOLATO FINISSIMO AL LATTE", "dolci"),
+        ("Cornetti di mais al formaggio", "snack_salati"),
+        ("Pasta sfoglia fresca", "pane_forno"),
+        ("Cuori di riccia", "frutta_verdura"),
+        ("Mozzarelle", "latticini_uova"),
+        ("Cabernet Franc DOC Collio", "bevande"),
+        ("Polpo pulito decongelato", "pesce"),
+        ("6 Buondì albicocca", "dolci"),
+        ("Pesto con basilico Genovese", "dispensa"),
+        ("Detergente per WC", "casa_pulizia"),
+    ],
+)
+def test_live_sample_category_regressions(title, category):
+    assert classify(title)["category_id"] == category

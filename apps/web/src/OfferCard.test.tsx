@@ -77,3 +77,29 @@ describe("Scheda prodotto", () => {
     expect(readPreferences()).toEqual([]);
   });
 });
+
+it.each([
+  ["bad", "kg"],
+  ["1.25", null],
+  ["Infinity", "kg"],
+  ["", "l"],
+])("non mostra prezzi unitari non validi", (unit, basis) => {
+  const { container } = render(
+    <OfferCard
+      offer={
+        {
+          ...offer,
+          price: {
+            ...offer.price,
+            calculated_unit_price: unit,
+            unit_price_basis: basis,
+          },
+        } as Offer
+      }
+      category="Carne"
+      onOpen={vi.fn()}
+    />,
+  );
+  expect(container.querySelector(".unit-price")).toBeNull();
+  cleanup();
+});

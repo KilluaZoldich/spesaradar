@@ -41,3 +41,21 @@ Niente HTML sorgente renderizzato, proxy immagini o capture eseguibili. React es
 ## Riferimenti primari verificati
 
 [FastAPI Background Tasks](https://fastapi.tiangolo.com/tutorial/background-tasks/), [SQLite WAL](https://www.sqlite.org/wal.html), [HTTPX transports](https://www.python-httpx.org/advanced/transports/), [httpcore network backends](https://www.encode.io/httpcore/network-backends/), [Vite](https://vite.dev/guide/), [Playwright](https://playwright.dev/docs/intro), [OWASP SSRF](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html), [RFC 9309](https://www.rfc-editor.org/info/rfc9309/). Versioni effettive nei lockfile; le API httpcore usate sono state provate dal fetch live e dai test offline.
+
+### Aggiunta rapida di profili di estrazione
+
+La raccolta comune chiama un adapter tramite il campo `connector` del manifest. Una nuova sede che condivide un formato verificato riusa trasporto, normalizzazione, classificazione, staging, pubblicazione e UI. Despar aggiunge un resolver di sessione/sede e HTML; Famila aggiunge un resolver dei metadati della sede e il profilo geometrico `extraction/selex_grid.py`. I parser non scrivono nel database. L'abilitazione resta separata dalla sola raggiungibilità del dominio.
+
+Il replay offline evita di ripetere il crawl ad ogni correzione:
+
+```bash
+PYTHONPATH=backend .venv/bin/python -m app.replay \
+  --manifest config/sources/despar-carpi.json \
+  --capture /percorso/privato/pagina-catalogo.html --output /tmp/esito-despar.json
+PYTHONPATH=backend .venv/bin/python -m app.replay \
+  --manifest config/sources/famila-carpi.json \
+  --store-html /percorso/privato/sede.html \
+  --capture /percorso/privato/mensile.pdf --output /tmp/esito-famila.json
+```
+
+Il rapporto contiene record accettati, prezzi, condizioni, evidenze e contatori; non effettua rete e non pubblica. Il file di output non viene sovrascritto. Per Conad rimane `app.source_tools replay-conad`. Prima di abilitare una nuova sede occorrono comunque verifica del collegamento ufficiale, scope, accesso e campione reale.

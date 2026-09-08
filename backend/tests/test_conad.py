@@ -238,7 +238,8 @@ def test_retailers_group_multiple_stores(client):
     names = [x["id"] for x in client.get("/api/v1/retailers").json()["items"]]
     assert names.count("conad") == 1 and "coop" in names and "despar" in names
     stores = client.get("/api/v1/targets?q=41012").json()["items"]
-    assert len(stores) == 3 and all(x["type"] == "store" for x in stores)
+    assert len([x for x in stores if x["retailer_id"] == "conad"]) == 3
+    assert all(x["type"] == "store" for x in stores)
 
 
 def test_mixed_period_page_is_withheld():

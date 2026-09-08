@@ -1503,6 +1503,11 @@ footer button {
     z-index: 15;
     box-shadow: 0 5px 24px #163d3426;
   }
+  .selection .search-offers:disabled {
+    opacity: 1;
+    background: #d8e0dc;
+    color: #4b6058;
+  }
 }
 .mobile-label {
   display: none;
@@ -1568,10 +1573,10 @@ footer .publication-note {
     margin: 0 0 4px;
   }
   .view-tabs {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
   .category-navigation {
-    margin-bottom: 16px;
+    margin-bottom: 8px;
   }
   .retailer-shortcuts {
     margin-top: 12px;
@@ -1587,5 +1592,157 @@ footer .publication-note {
   }
   .sort-label select {
     max-width: 126px;
+  }
+}
+
+/* One choice per retailer; store selection is disclosed only when needed. */
+.selection-eyebrow {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 22px;
+}
+.retailer-picker {
+  display: grid;
+  gap: 10px;
+}
+.retailer-choice {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  overflow: clip;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.retailer-choice.chosen {
+  border-color: var(--brand);
+  background: #f0f5ef;
+}
+.retailer-row {
+  width: 100%;
+  min-height: 106px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  text-align: left;
+  padding: 20px;
+  cursor: pointer;
+}
+.retailer-row:hover {
+  background: #eff3ed;
+}
+.retailer-row input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--brand);
+  order: 3;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.retailer-initial {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: #edf1e9;
+  color: var(--brand);
+  font-weight: 750;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.retailer-copy {
+  display: grid;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+.retailer-copy strong {
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+.retailer-copy small {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.retailer-stock {
+  font-size: 0.73rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  color: var(--brand);
+}
+.store-chooser {
+  border-top: 1px solid var(--line);
+  padding: 16px 20px 20px;
+}
+.store-chooser label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.store-chooser select {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px;
+  color: var(--ink);
+  font-size: 0.8rem;
+}
+@media (max-width: 700px) {
+  .selection-intro {
+    text-align: left;
+    padding-bottom: 0;
+  }
+  .selection-intro h1 {
+    font-size: 2.15rem;
+  }
+  .selection-eyebrow {
+    margin-bottom: 14px;
+  }
+  .retailer-row {
+    min-height: 96px;
+    padding: 16px;
+    gap: 12px;
+  }
+  .retailer-initial {
+    width: 40px;
+    height: 40px;
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 580px) {
+  .selection-eyebrow {
+    display: none;
+  }
+  .selection-intro {
+    padding-top: 4px;
+  }
+  .selection-intro h1 {
+    margin-bottom: 12px;
+  }
+}
+
+.catalog-heading .retailer-shortcuts {
+  margin: 8px 0 0;
+  max-width: 100%;
+}
+.catalog-heading > div:first-child {
+  min-width: 0;
+}
+@media (max-width: 580px) {
+  .catalog-heading {
+    min-height: 78px;
+  }
+  .catalog-heading .retailer-shortcuts {
+    margin: 6px 0;
   }
 }

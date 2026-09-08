@@ -88,12 +88,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1485,
+                  "duration": 648,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T08:38:51.856Z",
+                  "startTime": "2026-09-08T09:54:48.051Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -122,12 +122,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 574,
+                  "duration": 521,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T08:38:53.587Z",
+                  "startTime": "2026-09-08T09:54:48.801Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -156,12 +156,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1391,
+                  "duration": 1203,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T08:38:54.167Z",
+                  "startTime": "2026-09-08T09:54:49.326Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -171,7 +171,7 @@
           ],
           "id": "30aa42b97d8966d0c2dc-f27d4e3b8163738aaddf",
           "file": "catalog.spec.ts",
-          "line": 84,
+          "line": 85,
           "column": 5
         },
         {
@@ -190,12 +190,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1419,
+                  "duration": 1423,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T08:38:55.564Z",
+                  "startTime": "2026-09-08T09:54:50.534Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -205,11 +205,11 @@
           ],
           "id": "30aa42b97d8966d0c2dc-38695fac0365cdb5cca0",
           "file": "catalog.spec.ts",
-          "line": 109,
+          "line": 110,
           "column": 5
         },
         {
-          "title": "Carpi 41012: sedi Conad, dati PDF e limiti Coop/Interspar",
+          "title": "Carpi 41012: una voce Conad, cambio sede e nuove insegne",
           "ok": true,
           "tags": [],
           "tests": [
@@ -224,12 +224,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1899,
+                  "duration": 1815,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T08:38:56.988Z",
+                  "startTime": "2026-09-08T09:54:51.962Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -237,9 +237,43 @@
               "status": "expected"
             }
           ],
-          "id": "30aa42b97d8966d0c2dc-825e911bb6c1519016c6",
+          "id": "30aa42b97d8966d0c2dc-a9a1326704fa3589cd69",
           "file": "catalog.spec.ts",
-          "line": 175,
+          "line": 178,
+          "column": 5
+        },
+        {
+          "title": "Carpi: Famila e Interspar nel feed, cambio sede e preferenze senza duplicati",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1580,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-08T09:54:53.781Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "30aa42b97d8966d0c2dc-3a6715c65459cf4cc34e",
+          "file": "catalog.spec.ts",
+          "line": 227,
           "column": 5
         }
       ]
@@ -247,9 +281,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-08T08:38:51.526Z",
-    "duration": 7395.723,
-    "expected": 5,
+    "startTime": "2026-09-08T09:54:47.670Z",
+    "duration": 7722.346,
+    "expected": 6,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

@@ -92,6 +92,11 @@ export default function OfferCard({
   onOpen: () => void;
 }) {
   const unit = o.price.published_unit_price || o.price.calculated_unit_price;
+  const hasUnit =
+    unit != null &&
+    Number.isFinite(Number(unit)) &&
+    Number(unit) > 0 &&
+    (o.price.unit_price_basis === "kg" || o.price.unit_price_basis === "l");
   return (
     <article className="offer-card">
       <div className="card-top">
@@ -128,11 +133,11 @@ export default function OfferCard({
           <strong>{euros(o.price.advertised_amount_cents)}</strong>
           <span>{basisLabels[o.price.basis]}</span>
         </div>
-        <p className="unit-price">
-          {unit
-            ? `${Number(unit).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €/${o.price.unit_price_basis}${o.price.published_unit_price ? "" : " · calcolato"}`
-            : "Prezzo unitario non disponibile"}
-        </p>
+        {hasUnit && (
+          <p className="unit-price">
+            {`${Number(unit).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €/${o.price.unit_price_basis}${o.price.published_unit_price ? "" : " · calcolato"}`}
+          </p>
+        )}
       </div>
       <div className="card-facts">
         <Conditions offer={o} includeTags={false} />
@@ -147,9 +152,6 @@ export default function OfferCard({
           <p className="warning-text">Dato non aggiornato di recente</p>
         )}
         <div className="card-links">
-          <button onClick={onOpen}>
-            Dettagli e condizioni <span aria-hidden="true">→</span>
-          </button>
           <a
             href={o.source_url}
             target="_blank"

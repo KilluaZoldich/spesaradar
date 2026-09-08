@@ -8,13 +8,13 @@ import {
   RefreshCw,
   SlidersHorizontal,
   X,
-  Check,
   Info,
   WifiOff,
   Ticket,
   ShoppingBasket,
   ChevronDown,
 } from "lucide-react";
+import RetailerPicker, { oneTargetPerRetailer } from "./RetailerPicker";
 import CategoryNavigation, { shortCategory } from "./CategoryNavigation";
 import {
   api,
@@ -178,15 +178,17 @@ export default function App() {
         setCategories(c.items);
         setRetailers(r.items);
         const saved = readPreferences(),
-          valid = saved
-            .filter((id) => t.items.some((t) => t.id === id && t.enabled))
-            .slice(0, t.max_selections);
+          valid = oneTargetPerRetailer(saved, t.items).slice(
+            0,
+            t.max_selections,
+          );
+        if (saved.length !== valid.length) savePreferences(valid);
         setSelected(valid);
         setDraft(valid);
         setEditing(!valid.length);
         if (saved.length !== valid.length)
           setNotice(
-            "Una selezione salvata non è più supportata. Le altre sono state conservate.",
+            "Le selezioni sono state aggiornate: una sede per supermercato. Puoi cambiarla da Negozi.",
           );
         setInitialized(true);
       })
@@ -406,7 +408,9 @@ export default function App() {
     }
   }
   function search() {
-    const ids = draft.slice().sort();
+    const ids = oneTargetPerRetailer(draft, targets)
+      .slice(0, maxSelections)
+      .sort();
     generation.current++;
     setSelected(ids);
     currentKey.current = ids.join(",");
@@ -444,17 +448,6 @@ export default function App() {
   const selectedRetailers = [
     ...new Map(activeTargets.map((t) => [t.retailer_id, t])).values(),
   ];
-  const targetKinds: Record<string, string> = {
-    national: "Catalogo nazionale",
-    store: "Punto vendita",
-    regional: "Catalogo regionale",
-    online: "Offerte online",
-  };
-  const filteredTargets = targets.filter((t) =>
-    (t.retailer_name + " " + t.label)
-      .toLocaleLowerCase("it")
-      .includes(targetQuery.toLocaleLowerCase("it").trim()),
-  );
   const busy = refreshing || !!refreshId;
   const anyFilters =
     !!query ||
@@ -512,22 +505,22 @@ export default function App() {
         {editing ? (
           <section className="selection">
             <div className="selection-intro">
-              <span className="intro-icon">
-                <ShoppingBasket size={30} strokeWidth={1.5} />
+              <span className="selection-eyebrow">
+                Organizza la tua prossima spesa
               </span>
               <h1>
-                La spesa comincia <br />
-                dalle offerte giuste.
+                I tuoi supermercati.
+                <br /> Le offerte, tutte qui.
               </h1>
               <p>
-                Le offerte dei tuoi supermercati,
-                <br className="desktop-break" /> già divise per categoria.
+                Scegli dove fai la spesa. A prezzi, categorie e scadenze
+                pensiamo noi.
               </p>
             </div>
             <div className="selection-form">
               <h2>Scegli i supermercati</h2>
               <p className="muted">
-                Seleziona uno o più cataloghi da consultare insieme.
+                Una sola scelta per insegna. La sede la decidi tu.
               </p>
               <label className="search-input selection-search">
                 <Search size={18} aria-hidden="true" />
@@ -556,76 +549,19 @@ export default function App() {
                         .map((t) => t.retailer_id),
                     ).size
                   }{" "}
-                  insegne con offerte consultabili
+                  insegne disponibili
                 </span>
                 <span>
                   {draft.length}/{maxSelections} selezionati
                 </span>
               </div>
-              <div className="target-list">
-                {filteredTargets.map((t) => (
-                  <label
-                    key={t.id}
-                    className={
-                      "target-option " + (draft.includes(t.id) ? "chosen" : "")
-                    }
-                  >
-                    <input
-                      type="checkbox"
-                      checked={draft.includes(t.id)}
-                      disabled={
-                        !t.enabled ||
-                        (!draft.includes(t.id) && draft.length >= maxSelections)
-                      }
-                      onChange={() =>
-                        setDraft((v) =>
-                          v.includes(t.id)
-                            ? v.filter((id) => id !== t.id)
-                            : [...v, t.id],
-                        )
-                      }
-                    />
-                    <span className="store-monogram">
-                      {t.retailer_name.slice(0, 1)}
-                    </span>
-                    <span>
-                      <strong>{t.retailer_name}</strong>
-                      <span className="target-kind">
-                        {targetKinds[t.type] || t.type}
-                      </span>
-                      <small>
-                        {t.type === "national"
-                          ? "Adesione del negozio non verificata"
-                          : t.label}
-                      </small>
-                      {t.availability && (
-                        <span className="target-availability">
-                          {t.availability.current > 0
-                            ? `${t.availability.current} oggi`
-                            : t.availability.future > 0
-                              ? "Nessuna offerta oggi"
-                              : "Nessuna offerta raccolta di recente"}
-                          {t.availability.future > 0
-                            ? ` · ${t.availability.future} in arrivo`
-                            : ""}
-                        </span>
-                      )}
-                    </span>
-                    <Check className="selection-check" size={20} />
-                  </label>
-                ))}
-              </div>
-              {initialized && !filteredTargets.length && (
-                <p className="target-empty">
-                  Nessun catalogo verificato per “{targetQuery}”.{" "}
-                  <button
-                    className="text-button"
-                    onClick={() => setTargetQuery("")}
-                  >
-                    Mostra tutte le selezioni
-                  </button>
-                </p>
-              )}
+              <RetailerPicker
+                targets={targets}
+                selected={draft}
+                query={targetQuery}
+                max={maxSelections}
+                onChange={setDraft}
+              />
               {!initialized && <div className="skeleton selection-skeleton" />}
               <div className="scope-note">
                 <Info size={18} />
@@ -683,18 +619,37 @@ export default function App() {
             <section className="catalog-heading">
               <div>
                 <h1>Le tue offerte</h1>
-                <p className="catalog-subtitle">
-                  Confronta prodotti, prezzi e condizioni.
-                </p>
-                <div className="selected-stores">
-                  <Store size={17} />
-                  {selectedRetailers.map((t) => t.retailer_name).join(" + ")}
-                  <span>
-                    {activeTargets.some((t) => t.type !== "national")
-                      ? "Ambiti scelti da te"
-                      : "Cataloghi nazionali"}
-                  </span>
-                </div>
+                {selectedRetailers.length === 1 && (
+                  <div className="selected-stores">
+                    <Store size={17} />
+                    {selectedRetailers[0].retailer_name}
+                  </div>
+                )}
+                {selectedRetailers.length > 1 && (
+                  <nav
+                    className="retailer-shortcuts"
+                    aria-label="Filtra per supermercato"
+                  >
+                    <button
+                      aria-pressed={!retailer}
+                      onClick={() => setRetailer("")}
+                    >
+                      <span className="desktop-label">
+                        Tutti i supermercati
+                      </span>
+                      <span className="mobile-label">Tutti</span>
+                    </button>
+                    {selectedRetailers.map((t) => (
+                      <button
+                        key={t.retailer_id}
+                        aria-pressed={retailer === t.retailer_id}
+                        onClick={() => setRetailer(t.retailer_id)}
+                      >
+                        {t.retailer_name}
+                      </button>
+                    ))}
+                  </nav>
+                )}
               </div>
               <div className="heading-actions">
                 <button
@@ -795,31 +750,6 @@ export default function App() {
                     )}
                   </button>
                 </div>
-                {selectedRetailers.length > 1 && (
-                  <nav
-                    className="retailer-shortcuts"
-                    aria-label="Filtra per supermercato"
-                  >
-                    <button
-                      aria-pressed={!retailer}
-                      onClick={() => setRetailer("")}
-                    >
-                      <span className="desktop-label">
-                        Tutti i supermercati
-                      </span>
-                      <span className="mobile-label">Tutti</span>
-                    </button>
-                    {selectedRetailers.map((t) => (
-                      <button
-                        key={t.retailer_id}
-                        aria-pressed={retailer === t.retailer_id}
-                        onClick={() => setRetailer(t.retailer_id)}
-                      >
-                        {t.retailer_name}
-                      </button>
-                    ))}
-                  </nav>
-                )}
                 <CategoryNavigation
                   categories={categories}
                   counts={catalog?.category_counts || {}}
@@ -880,20 +810,8 @@ export default function App() {
                     <p>“Non verificato” non significa assenza di condizioni.</p>
                   </div>
                 )}
-                {(retailer || loyalty !== "all" || minimum !== "all") && (
+                {(loyalty !== "all" || minimum !== "all") && (
                   <div className="active-filters" aria-label="Filtri applicati">
-                    {retailer && (
-                      <button
-                        onClick={() => setRetailer("")}
-                        aria-label="Rimuovi filtro supermercato"
-                      >
-                        {
-                          activeTargets.find((t) => t.retailer_id === retailer)
-                            ?.retailer_name
-                        }
-                        <X size={14} aria-hidden="true" />
-                      </button>
-                    )}
                     {loyalty !== "all" && (
                       <button
                         onClick={() => setLoyalty("all")}

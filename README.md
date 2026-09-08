@@ -2,13 +2,13 @@
 
 Le offerte dei tuoi supermercati, già divise per categoria. Web app locale in italiano, con raccolta automatica da siti ufficiali, database persistente e nessun LLM o servizio di scraping a pagamento.
 
-**Rilascio 0.3 parziale.** Quattro insegne con connettori reali: **Lidl Italia** ed **Eurospin** per cataloghi nazionali, **MD** per la sede verificata di **Milano, via Rubens 8**, e **Conad a Carpi (41012)** nelle sedi **via Carlo Marx 99, via Roosevelt/Ramazzini 72 e via Mar Ionio 14**. Conad: 49 offerte attuali e 51 future nei due volantini esaminati, con copertura parziale dei riquadri testuali. I prezzi nazionali non confermano l’adesione del singolo negozio. MD non è presentato come catalogo nazionale; le date dei suoi articoli non sono confermate dalla pipeline. Copertura selettiva, condizioni non sempre integralmente disponibili, social e buoni generici non acquisiti. Nessun dato inventato viene inserito nel catalogo live. Vedi [audit delle fonti](docs/source-audit.md) e [verifica](docs/verification.md).
+**Rilascio 0.4 parziale.** Sei insegne con prodotti reali: **Lidl** ed **Eurospin** (cataloghi nazionali), **MD** (Milano, via Rubens 8), **Conad** (tre sedi a Carpi), **Despar / Interspar Carpi** e **Famila Carpi**. La selezione mostra una sola voce per insegna e permette di scegliere/cambiare la sede al suo interno. Despar: 175 prodotti dalle prime 20 pagine del catalogo; Famila: 130 prodotti del mensile Selex. Le meccaniche non verificabili sono escluse. I cataloghi nazionali non confermano l’adesione del negozio. MD ha date non confermate. La copertura rimane selettiva; social e buoni generici non sono acquisiti. Vedi [audit](docs/source-audit.md) e [verifiche](docs/verification.md).
 
 ## Versione online
 
 [Apri SpesaRadar su GitHub Pages](https://killuazoldich.github.io/spesaradar/). Il catalogo viene raccolto periodicamente da GitHub Actions; ricerca, filtri e dettaglio funzionano da remoto. Il pulsante di aggiornamento controlla l’ultima pubblicazione, senza avviare una raccolta immediata. [Funzionamento, gratuità e limiti](docs/pages.md).
 
-[Apri direttamente la selezione Carpi · 41012](https://killuazoldich.github.io/spesaradar/?cap=41012), oppure cerca **41012** nella selezione. Coop Alleanza 3.0 e Interspar sono visibili nella copertura con i rispettivi limiti di accesso; i loro prezzi non sono ancora acquisiti.
+[Apri direttamente la selezione Carpi · 41012](https://killuazoldich.github.io/spesaradar/?cap=41012), oppure cerca **41012** nella selezione. Conad, Interspar e Famila hanno sedi verificate a Carpi. Coop e Sigma restano nella copertura non disponibile, con i limiti riscontrati; non vengono mostrate offerte inventate.
 
 ## Avvio con Docker
 
@@ -103,3 +103,5 @@ La revisione dell’interfaccia con Build Web Apps, le schermate desktop/mobile 
 ## Estensione più rapida delle fonti
 
 [Guida ai profili e al replay offline](docs/source-onboarding.md): aggiungere una sede Conad dello stesso formato richiede un manifest verificato, senza duplicare parser, worker o interfaccia. Il comando di scaffolding crea fonti disabilitate; il replay produce un rapporto diagnostico senza effettuare richieste o pubblicare prezzi.
+
+Per sviluppare connettori più rapidamente senza nuove richieste a ogni modifica, usa i [profili e il replay offline](docs/architecture.md#aggiunta-rapida-di-profili-di-estrazione). La UI e la coda non cambiano per ogni nuova insegna.

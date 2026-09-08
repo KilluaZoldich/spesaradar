@@ -71,7 +71,8 @@ test("Pages live: futuro, Eurospin, prezzo compatibile e mobile", async ({
   await expect(page.locator(".offer-card").first()).toBeVisible();
   await page.getByRole("button", { name: "Filtri", exact: true }).click();
   await page
-    .getByRole("button", { name: "Rimuovi filtro supermercato" })
+    .getByRole("navigation", { name: "Filtra per supermercato" })
+    .getByRole("button", { name: "Tutti i supermercati", exact: true })
     .click();
   await page.setViewportSize({ width: 360, height: 800 });
   expect(
@@ -169,10 +170,12 @@ test("Pages: nuova sede MD, carta e passaggio rapido alle offerte future", async
     ),
   ).toBe(true);
   await page.reload();
-  await expect(page.locator(".selected-stores")).toContainText("MD");
+  await expect(
+    page.getByRole("navigation", { name: "Filtra per supermercato" }),
+  ).toContainText("MD");
 });
 
-test("Carpi 41012: sedi Conad, dati PDF e limiti Coop/Interspar", async ({
+test("Carpi 41012: una voce Conad, cambio sede e nuove insegne", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -182,15 +185,14 @@ test("Carpi 41012: sedi Conad, dati PDF e limiti Coop/Interspar", async ({
   await expect(page.getByLabel("Cerca supermercato o sede")).toHaveValue(
     "41012",
   );
-  await expect(page.getByRole("checkbox")).toHaveCount(3);
-  await page
-    .getByRole("checkbox", { name: /Conad Punto vendita.*Carlo Marx/ })
-    .check();
+  await expect(page.locator('[data-retailer="conad"]')).toHaveCount(1);
+  await page.getByRole("button", { name: "Conad: scegli sede" }).click();
+  await page.getByLabel("Punto vendita Conad").selectOption("conad-000350");
+  await expect(page.locator('[data-retailer="famila"]')).toBeVisible();
+  await expect(page.locator('[data-retailer="despar"]')).toBeVisible();
   await page.locator(".unsupported summary").click();
   await expect(page.locator(".unsupported")).toContainText("Coop Alleanza 3.0");
-  await expect(page.locator(".unsupported")).toContainText(
-    "Despar / Interspar",
-  );
+  await expect(page.locator(".unsupported")).toContainText("Sigma");
   await expect(page.locator(".unsupported")).toContainText("non acquisite");
   await page.screenshot({ path: "../../docs/carpi-selection-mobile.png" });
   await page
@@ -216,6 +218,66 @@ test("Carpi 41012: sedi Conad, dati PDF e limiti Coop/Interspar", async ({
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  const { default: AxeBuilder } =
+    await import("../../apps/web/node_modules/@axe-core/playwright/dist/index.mjs");
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test("Carpi: Famila e Interspar nel feed, cambio sede e preferenze senza duplicati", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto("./?cap=41012");
+  await page.getByRole("checkbox", { name: /Famila Punto vendita/ }).check();
+  await page.getByRole("checkbox", { name: /Despar.*Punto vendita/ }).check();
+  await page.getByRole("button", { name: "Conad: scegli sede" }).click();
+  await page.getByLabel("Punto vendita Conad").selectOption("conad-000350");
+  await page.getByRole("button", { name: "Conad: cambia sede" }).click();
+  await page.getByLabel("Punto vendita Conad").selectOption("conad-010088");
+  await page.screenshot({
+    path: "../../docs/selection-one-brand-mobile.png",
+    fullPage: true,
+  });
+  await page
+    .getByRole("button", { name: "Cerca offerte", exact: true })
+    .click();
+  await expect(page.locator(".offer-card").first()).toBeVisible();
+  const nav = page.getByRole("navigation", { name: "Filtra per supermercato" });
+  await nav.getByRole("button", { name: "Famila", exact: true }).click();
+  await page.getByLabel("Cerca prodotti").fill("salmone norvegese");
+  await expect(page.locator(".offer-card")).toHaveCount(1);
+  await expect(page.locator(".offer-card")).toContainText("12,50");
+  await page.locator(".offer-card h3 button").click();
+  await expect(page.getByRole("dialog")).toContainText("PDF pagina 4");
+  await page.keyboard.press("Escape");
+  await page
+    .getByRole("button", { name: "Cancella ricerca", exact: true })
+    .click();
+  await nav
+    .getByRole("button", { name: "Despar / Interspar", exact: true })
+    .click();
+  await page.getByLabel("Cerca prodotti").fill("petto pollo");
+  await expect(page.locator(".offer-card").first()).toContainText(
+    "Interspar Carpi",
+  );
+  await page.screenshot({ path: "../../docs/despar-mobile.png" });
+  const saved = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("spesaradar.preferences") || "{}"),
+  );
+  expect(
+    saved.target_ids.filter((x: string) => x.startsWith("conad-")),
+  ).toEqual(["conad-010088"]);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page
+    .getByRole("button", { name: "Cancella ricerca", exact: true })
+    .click();
   const { default: AxeBuilder } =
     await import("../../apps/web/node_modules/@axe-core/playwright/dist/index.mjs");
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);

@@ -100,6 +100,32 @@ def identity(*parts) -> str:
 
 # Priority exceptions precede exact source mappings. No dietary tags inferred.
 RULES = [
+    ("pet-purina-gourmet", "animali", r"\bpurina gourmet\b"),
+    ("ready-macaroni", "piatti_pronti", r"\bmaccheroni con speck\b"),
+    ("sliced-cooked-turkey", "salumi", r"\btacchino al forno a fette\b"),
+    ("cordon-bleu", "piatti_pronti", r"\bcordon bleu\b"),
+    ("milk-chocolate", "dolci", r"\bcioccolato (?:finissimo )?al latte\b"),
+    ("cheese-corn-snack", "snack_salati", r"\bcornetti di mais\b"),
+    ("puff-pastry", "pane_forno", r"\bpasta sfoglia\b"),
+    (
+        "lettuce-hearts",
+        "frutta_verdura",
+        r"\b(?:cuori di lattuga|cuori di riccia|kiwi verdi)\b",
+    ),
+    (
+        "named-cheeses",
+        "latticini_uova",
+        r"\b(?:mozzarelle|emmental|pecorino|squaquerello|sottilette)\b",
+    ),
+    (
+        "wine-varieties",
+        "bevande",
+        r"\b(?:cabernet|sauvignon|lambrusco|chianti|merlot|chardonnay|sangiovese|prosecco|gin)\b",
+    ),
+    ("seafood-octopus", "pesce", r"\b(?:polpo|filetti di alici|misto mare)\b"),
+    ("breakfast-buondi", "dolci", r"\bbuondi\b"),
+    ("pesto", "dispensa", r"\bpesto con basilico\b"),
+    ("house-detergent", "casa_pulizia", r"\bdetergente (?:pavimenti|per wc)\b"),
     ("baby-food", "infanzia", r"\bomogeneizzat[oi]\b"),
     ("sliced-poultry", "salumi", r"\baffettati\b.*\b(?:pollo|tacchino)\b"),
     ("prepared-pizza", "piatti_pronti", r"\bpizza\b"),
@@ -245,7 +271,7 @@ def classify(title: str, original: str | None = None, description: str = "") -> 
         category_id=cat,
         category_rule_id=rule,
         classification_level=level,
-        classification_version="5",
+        classification_version="6",
         tags=tags,
     )
 

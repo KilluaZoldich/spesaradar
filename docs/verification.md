@@ -153,3 +153,29 @@ Prova statica locale con `VITE_BASE_PATH=/spesaradar/ vite preview --host 127.0.
 Pubblicazione remota verificata: [run 34205334236](https://github.com/KilluaZoldich/spesaradar/actions/runs/34205334236), commit codice `8a5dbce`, concluso con successo. I tre job Conad sul runner Ubuntu hanno raccolto 100 offerte per sede, 4 richieste ciascuno, in **29,28 / 27,35 / 27,52 secondi**. Lo snapshot delle 08:37:19 UTC contiene 855 record per ambito (555 precedenti + 3 × 100 Conad); sono 100 promozioni Conad comuni alle tre sedi, non 300 promozioni uniche. Le altre fonti hanno riusato gli orari di verifica esistenti. [Metadati remoti](carpi-deployment.json).
 
 `PAGES_TEST_URL=https://killuazoldich.github.io/spesaradar/ npm --prefix apps/web run test:pages`: **5 passed**, 7,4 s sul sito pubblico, inclusi MD e il nuovo percorso Carpi. Il link `?cap=41012` precompila solo la ricerca delle sedi, senza selezionare automaticamente negozi. Le capture grezze dello scouting sono state eliminate (circa 39 MB); rimangono metadati e campione fattuale. Le capture private del worker locale seguono la retention ordinaria di 7 giorni/500 MB.
+
+## Sei insegne, selezione semplificata e replay locale — 8 settembre 2026
+
+Verifica sullo stesso Mac ARM64, Python 3.13 e Node 24, senza nuove dipendenze. Aggiunti due connettori reali: Interspar Carpi via HTML ufficiale e Famila Carpi tramite il PDF mensile Selex collegato dalla pagina sede. La selezione presenta una voce per insegna; Conad richiede la scelta di una sola sede e migra le vecchie preferenze senza aggiungere negozi casuali. Filtri per insegna integrati nell'intestazione del catalogo, schede più compatte e condizioni economiche ancora visibili.
+
+| Comando / controllo | Esito |
+| --- | --- |
+| `PYTHONPATH=backend .venv/bin/pytest backend/tests -q` | 182 passati in 1,39 s; due warning upstream già documentati |
+| `.venv/bin/ruff check backend/app backend/tests` | Passato |
+| `npm --prefix apps/web test` | 22 passati |
+| Build statica React/TypeScript/Vite | Passata; snapshot di anteprima con 1160 record per ambito |
+| `npm --prefix apps/web run test:pages` su anteprima 8082 | 6 passati, inclusi Famila, Interspar, sostituzione sede Conad, ricerca CAP e dettaglio |
+| Replay Famila sulla capture PDF già acquisita | 130 accettati su 176 celle riconosciute, 46 isolati; circa 2,15 s senza rete |
+| Replay Despar sulla prima pagina HTML già acquisita | 9 accettati su 12 riquadri, circa 0,025 s senza rete |
+
+Il replay è diagnostico: non pubblica dati e non aggiorna la loro freschezza. Il profilo PDF Selex riusa il riconoscimento geometrico della griglia e verifica il prezzo al kg/l con aritmetica Decimal. Il percorso HTML usa il normale modulo pubblico di selezione sede; il POST è limitato all'endpoint dichiarato nel manifest, con controlli robots, destinazione, redirect, budget e nessun retry del POST.
+
+Raccolta Interspar: 25 richieste in 72,9 s, 20 pagine delle 77 indicate dalla fonte, 175 record ammessi e 65 isolati su 240 riquadri. Campione di 50 record confrontato con nome, prezzo/base, formato, periodo e sede nei riquadri ufficiali. Raccolta Famila: PDF mensile di 18 pagine, 130 record ammessi; campione visuale di 59 record sulle pagine 2, 4, 5, 6 e 7. Nessun errore economico critico noto nei campioni finali. Copertura totale Famila non misurabile: le 176 celle riconosciute non sono il totale certificato delle offerte del volantino. Sottocosto, sponsor e layout non supportati sono esclusi. Entrambe le fonti restano `partial`.
+
+Le 1160 righe dell'anteprima sono record per ambito, non 1160 promozioni uniche: comprendono le 100 promozioni Conad replicate nei tre contesti sede. La nuova selezione di una sola sede evita questa ripetizione nel feed. I timestamp di verifica delle capture locali sono preservati nell'anteprima, senza aggiornarli durante il replay. HTML, PDF, cookie e immagini delle fonti restano privati.
+
+Revisione separata del codice: corretti filtro CAP nelle opzioni sede, prezzo unitario con valore/base non validi, e aggiunti test del ciclo completo dei due collector. Verificate paginazione parziale, cambio sede/campagna, redirect, rifiuto di meccaniche economiche ambigue e isolamento dei lotti. Classificatore deterministico versione 6, con regressioni per alimenti per animali, piatti pronti, cioccolato al latte e altre categorie.
+
+Sigma Carpi resta non acquisito: il percorso del localizzatore osservato richiede una destinazione vietata da robots; nessun invio eseguito a quella destinazione. Coop Carpi resta non acquisito dopo il 403 del servizio catalogo già documentato. Lo scouting di alternative ufficiali non ha verificato un volantino corrente indipendente per questi due casi. Il rilascio resta parziale e non dichiara queste insegne come funzionanti. Dettagli e limiti di riuso in [source-audit.md](source-audit.md).
+
+Ricostruzione finale `docker compose up --build -d` riuscita: migrazioni exit 0, API healthy, worker e web avviati su loopback. `npm --prefix apps/web run test:e2e`: **9 passati in 8,7 s** sulla build finale. Il primo controllo dopo lo spostamento dei filtri usava ancora il selettore CSS della vecchia riga duplicata; aggiornato il test alla regione accessibile «Filtra per supermercato» e ripetuta tutta la suite. Nessun errore console o overflow nei percorsi verificati; controlli Axe superati, senza implicare una certificazione completa di accessibilità.

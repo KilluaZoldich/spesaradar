@@ -35,7 +35,14 @@ class Manifest(BaseModel):
     cooldown_seconds: int = Field(ge=1800)
     suspend_on: list[int]
     timeout_seconds: int = Field(le=30)
-    connector: Literal["lidl", "eurospin", "md", "conad_pdf"] | None = None
+    connector: (
+        Literal[
+            "lidl", "eurospin", "md", "conad_pdf", "despar_html", "famila_selex_pdf"
+        ]
+        | None
+    ) = None
+    selection_endpoint: str | None = None
+    max_catalog_pages: int = Field(default=20, ge=1, le=40)
     store_id: str | None = None
     campaign_title_suffix: str | None = None
     max_documents: int = Field(default=2, ge=1, le=3)
@@ -49,6 +56,10 @@ class Manifest(BaseModel):
             not self.store_id or not self.campaign_title_suffix
         ):
             raise ValueError("Profilo Conad privo di sede o ambito campagna")
+        if self.connector == "despar_html" and (
+            not self.store_id or not self.selection_endpoint
+        ):
+            raise ValueError("Profilo Despar privo di sede o modulo verificato")
         return self
 
 
