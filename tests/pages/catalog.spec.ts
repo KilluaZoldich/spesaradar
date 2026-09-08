@@ -171,3 +171,53 @@ test("Pages: nuova sede MD, carta e passaggio rapido alle offerte future", async
   await page.reload();
   await expect(page.locator(".selected-stores")).toContainText("MD");
 });
+
+test("Carpi 41012: sedi Conad, dati PDF e limiti Coop/Interspar", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto("./?cap=41012");
+  await expect(page.getByLabel("Cerca supermercato o sede")).toHaveValue(
+    "41012",
+  );
+  await expect(page.getByRole("checkbox")).toHaveCount(3);
+  await page
+    .getByRole("checkbox", { name: /Conad Punto vendita.*Carlo Marx/ })
+    .check();
+  await page.locator(".unsupported summary").click();
+  await expect(page.locator(".unsupported")).toContainText("Coop Alleanza 3.0");
+  await expect(page.locator(".unsupported")).toContainText(
+    "Despar / Interspar",
+  );
+  await expect(page.locator(".unsupported")).toContainText("non acquisite");
+  await page.screenshot({ path: "../../docs/carpi-selection-mobile.png" });
+  await page
+    .getByRole("button", { name: "Cerca offerte", exact: true })
+    .click();
+  await expect(page.locator(".offer-card").first()).toBeVisible();
+  await page.getByRole("textbox", { name: "Cerca prodotti" }).fill("coca cola");
+  await expect(page.locator(".offer-card")).toHaveCount(1);
+  await expect(page.locator(".offer-card")).toContainText("1,89");
+  await expect(page.locator(".offer-card")).toContainText("Solo con carta");
+  await expect(page.locator(".offer-card")).toContainText("Carlo Marx");
+  await page.locator(".offer-card h3 button").click();
+  await expect(page.getByRole("dialog")).toContainText("PDF pagina 4");
+  await page.keyboard.press("Escape");
+  await page
+    .getByRole("button", { name: "Cancella ricerca", exact: true })
+    .click();
+  await page.getByRole("button", { name: "In arrivo", exact: true }).click();
+  await expect(page.locator(".offer-card").first()).toBeVisible();
+  await page.screenshot({ path: "../../docs/conad-mobile.png" });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  const { default: AxeBuilder } =
+    await import("../../apps/web/node_modules/@axe-core/playwright/dist/index.mjs");
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  expect(errors).toEqual([]);
+});

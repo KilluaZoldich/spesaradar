@@ -1,0 +1,35 @@
+{
+  "source_id": "conad-000386",
+  "retailer_id": "conad",
+  "name": "Conad",
+  "source_type": "text_pdf",
+  "parser_version": "1",
+  "allowed_domains": [
+    "www.conad.it"
+  ],
+  "entry_urls": [
+    "https://www.conad.it/ricerca-negozi/conad-via-roosevelt-ang-vramazzini-72-41012-carpi--000386"
+  ],
+  "audit_status": "partial",
+  "enabled": true,
+  "scope_type": "store",
+  "scope_label": "Carpi (MO) · 41012 · Via Roosevelt angolo Via Ramazzini 72",
+  "capabilities": [
+    "products",
+    "store_scope"
+  ],
+  "max_requests": 8,
+  "min_interval_seconds": 3,
+  "deadline_seconds": 180,
+  "refresh_seconds": 43200,
+  "cooldown_seconds": 1800,
+  "suspend_on": [
+    403,
+    401,
+    429
+  ],
+  "timeout_seconds": 30,
+  "connector": "conad_pdf",
+  "store_id": "000386",
+  "campaign_title_suffix": "CONAD EMILIA"
+}

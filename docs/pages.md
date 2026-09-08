@@ -48,3 +48,7 @@ Prima raccolta e deploy remoti riusciti: [run](https://github.com/KilluaZoldich/
 ## Copertura ampliata (8 settembre 2026)
 
 Lidl ed Eurospin restano ambiti nazionali; MD è disponibile esclusivamente per la sede verificata Milano, via Rubens 8. Il connettore risolve ogni volta il volantino dalla pagina ufficiale della sede. Nessuna località viene assegnata automaticamente all’utente. Le altre insegne esaminate hanno stati di supporto espliciti e non sono selezionabili. Il nuovo catalogo MD conserva date sconosciute, condizioni carta e limiti di freschezza. [Audit dettagliato](source-audit.md).
+
+### Carpi, CAP 41012
+
+Conad aggiunto per tre sedi verificate: via Carlo Marx 99, via Roosevelt/Ramazzini 72 e via Mar Ionio 14. Il runner usa il medesimo profilo PDF testuale del worker. Le offerte attuali e future restano separate; i volantini condivisi non provano disponibilità a scaffale. Cercare **41012** nella selezione. Coop Alleanza 3.0 e Interspar sono dichiarati nella copertura, con collegamenti alle sedi ufficiali e motivazione della mancata acquisizione, senza prezzi inventati.

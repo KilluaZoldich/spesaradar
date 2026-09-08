@@ -73,3 +73,43 @@ Il nuovo incarico di ampliare la copertura ha aperto un secondo ciclo, **limitat
 Lo stato dei social rimane invariato. Le capture aggiuntive di sviluppo e della verifica isolata sono state eliminate alla chiusura; rimangono metadati minimi. Le capture dell’installazione locale ordinaria seguono la retention del worker.
 
 La successiva esecuzione GitHub Actions ha confermato il medesimo risultato MD: 105 offerte, 7 richieste, 12,61 secondi, esito parziale. [Verifica remota](expansion-deployment.json). Questo conferma l’accessibilità al momento della prova, senza estendere la copertura ad altre sedi.
+
+## Terzo ciclo — Carpi, CAP 41012 (8 settembre 2026)
+
+Richiesto dall’utente: Conad, Coop e SPAR/Despar. Il CAP è stato fornito esplicitamente; nessuna sede scelta a caso. Questo aggiornamento supera lo stato iniziale di Conad nella tabella storica sopra.
+
+### Conad — `partial`, tre sedi abilitate
+
+Pagine ufficiali, tutte recuperate e controllate:
+
+- https://www.conad.it/ricerca-negozi/conad-via-carlo-marx-99-41012-carpi--000350
+- https://www.conad.it/ricerca-negozi/conad-via-roosevelt-ang-vramazzini-72-41012-carpi--000386
+- https://www.conad.it/ricerca-negozi/conad-via-mar-ionio-14-41012-carpi--010088
+
+Identità CONAD Società Cooperativa nel footer; intestazione e `data-store-id` confermano indirizzo e sede. `data-flyers` collega in tutte e tre le sedi i PDF principali CNO Emilia: `20262618PCONADEMILIA.pdf` (27 agosto–9 settembre 2026) e `20262619PCONADEMILIA.pdf` (10–23 settembre 2026), sotto `https://www.conad.it/assets/common/volantini/cno/v20262/`. I parametri hash effettivi vengono letti dal sito, non costruiti. Nessun dominio terzo necessario.
+
+Robots verificato dal client per ogni host: le pagine sede e i PDF risultano ammessi; `/excel-volantini.xlsx` resta escluso e non acquisito. Footer e pagina non mostrano una licenza generale di redistribuzione. Si mantengono dati fattuali minimi, fonti e prove private; nessuna fotografia, logo o volantino integrale pubblicato. Questa verifica tecnica non certifica diritti commerciali.
+
+I volantini esaminati dichiarano `hasDisaggregated=false`, senza catalogo prodotti JSON. Il nuovo percorso **PDF testuale, senza OCR** usa pdfplumber 0.11.10 (MIT). Guardie su dimensioni/font/riquadri e confronto formato/prezzo unitario; prezzi precedenti non pubblicati. Date commerciali sono correlate ai millisecondi del JSON e confermate dalla data stampata sulla pagina. Sconto aggiuntivo Club Famiglia conservato come condizione testuale: non sottratto automaticamente dal prezzo esposto. Assenza di badge carta = requisito sconosciuto.
+
+**49 offerte attuali + 51 future**, per ciascuna delle tre sedi che linkano gli stessi PDF. Sono **100 promozioni**, non 300 promozioni diverse: le sedi hanno identità e applicabilità separate. Dei 130 riquadri riconosciuti nelle pagine con periodo confermato, 100 superano i controlli e 30 sono esclusi. Non sono inclusi copertine, riquadri di altri formati, prezzi al peso variabile, pagine senza periodo concordante o campagne secondarie. Copertura dell’intero volantino non misurata.
+
+Campione visivo: 50 prodotti, 28 dalla campagna attuale (pagine 2, 4, 16, 18) e 22 dalla futura (3, 5, 10). Confrontati identità/variante, prezzo, formato, badge carta, periodo e collegamento alle sedi. Nessun errore critico noto nel campione finale. Nelle sette pagine campionate si contano 75 aree promozionali visibili, di cui 50 pubblicate; le altre 25 includono riquadri non supportati, prezzi senza formato univoco e una promozione senza importo articolo. Questi conteggi non descrivono altre campagne o insegne. Metadati in `conad-sample.json`.
+
+### Coop Alleanza 3.0 — `blocked_access`, nessun prezzo pubblicato
+
+- https://www.coopalleanza3-0.it/ e `/fare-spesa/elenco-negozi.html`.
+- Pagine sede `/fare-spesa/elenco-negozi/dettaglio-negozio/3967-ipercoop-il-borgogioioso.html` (Via dell’Industria 31) e `/4899-carpi-via-carlo-sigonio.html` (Via Carlo Sigonio 15).
+- Il JavaScript ufficiale della mappa usa `POST /storeLocatorServlet/?operation=getStores`, pubblico e senza credenziali: verificato il catalogo sedi, filtrato a Carpi. Nessun crawl nazionale delle sedi.
+- La pagina prodotti Crescendo della sede Sigonio contiene una shell JavaScript, con `data-pdv_id=9530`. Il sito dichiara il servizio `https://svdgt.coopalleanza3-0.it/apim/leaflets/9530`; acquisizione protetta interrotta con **403**, senza cambio identità, endpoint alternativi o token privati. L’esito riguarda il percorso di acquisizione comprensivo di robots, non dimostra che il prodotto sia assente.
+- La sede Don Albertario compare nel catalogo ufficiale ma il suo volantino non è stato approfondito. Unicoop Firenze è stata esaminata e ha offerte HTML, ma appartiene a una cooperativa/area diversa: non presentata come copertura Coop Carpi.
+
+### Despar / Interspar — `blocked_access`, nessun prezzo pubblicato
+
+- https://www.despar.it/it/punto-vendita-interspar/819/carpi/ : Interspar, Tangenziale Bruno Losi, angolo Via Nuova Ponente, 41012 Carpi; identità Aspiag Service nel sito ufficiale. JSON-LD GroceryStore/SaleEvent conferma sede e campagna 27 agosto–10 settembre.
+- La sede collega `https://volantino.despar.it/leaflet-interspar/2026-os78-118-2026-is-carpi/`, lettore iPaper. Dominio ammesso nello scouting per il collegamento osservato, non per somiglianza del nome.
+- Selezione del negozio verificata usando il normale modulo pubblico della sede e il suo token effimero, in sessione isolata. Nessun login. `/it/offerte-per-te/` conferma Carpi, ma mostra collegamenti editoriali ai volantini.
+- Il lettore contiene 34 pagine e testi di ricerca. L’ordine testuale separa nomi e prezzi e non permette associazioni affidabili: non usato come feed prodotto. La negoziazione HTTP `Accept-Encoding: identity` risolve un errore di compressione, mantenendo TLS e User-Agent identificabile. Robots con BOM viene interpretato correttamente.
+- Il servizio script `cdn.ipaper.io`, collegato dal lettore, restituisce 403 al percorso protetto di acquisizione. Nessuna elusione; non vengono inventati URL di download PDF. La seconda sede citata nel volantino non è automaticamente abilitata.
+
+Fonti social: nessuna nuova integrazione. I collegamenti ufficiali a Coop/Interspar in UI sono dichiarazioni di copertura e verifica della sede; **non contano come cataloghi funzionanti**.

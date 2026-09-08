@@ -100,6 +100,10 @@ def identity(*parts) -> str:
 
 # Priority exceptions precede exact source mappings. No dietary tags inferred.
 RULES = [
+    ("baby-food", "infanzia", r"\bomogeneizzat[oi]\b"),
+    ("sliced-poultry", "salumi", r"\baffettati\b.*\b(?:pollo|tacchino)\b"),
+    ("prepared-pizza", "piatti_pronti", r"\bpizza\b"),
+    ("plant-kebab", "piatti_pronti", r"\bkebab\b.*\bvegetale\b"),
     ("stuffed-pasta", "pasta_riso_cereali", r"\b(?:tortellini|tortelloni|ravioli)\b"),
     ("mashed-potatoes", "piatti_pronti", r"\bpure[’']? di patate\b"),
     ("baby-diapers", "infanzia", r"\bpampers baby[ -]?dry\b"),
@@ -241,7 +245,7 @@ def classify(title: str, original: str | None = None, description: str = "") -> 
         category_id=cat,
         category_rule_id=rule,
         classification_level=level,
-        classification_version="4",
+        classification_version="5",
         tags=tags,
     )
 

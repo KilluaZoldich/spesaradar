@@ -131,10 +131,18 @@ UNSUPPORTED = [
         "message": "Accesso automatizzato bloccato dalla fonte.",
     },
     {
-        "id": "conad",
-        "name": "Conad",
-        "support_status": "candidate",
-        "message": "Cataloghi per punto vendita non ancora verificati.",
+        "id": "coop",
+        "name": "Coop Alleanza 3.0",
+        "support_status": "blocked_access",
+        "message": "Carpi 41012: sedi Borgogioioso e via Sigonio verificate. Accesso al servizio prodotti rifiutato; offerte non acquisite.",
+        "source_url": "https://www.coopalleanza3-0.it/fare-spesa/elenco-negozi/dettaglio-negozio/3967-ipercoop-il-borgogioioso.html",
+    },
+    {
+        "id": "despar",
+        "name": "Despar / Interspar",
+        "support_status": "blocked_access",
+        "message": "Carpi 41012: Interspar di Tangenziale Bruno Losi verificato. Il lettore è accessibile, ma non tutti i servizi necessari all’estrazione; prezzi non acquisiti.",
+        "source_url": "https://www.despar.it/it/punto-vendita-interspar/819/carpi/",
     },
     {
         "id": "penny",
@@ -160,18 +168,23 @@ def ready():
 
 @app.get("/api/v1/retailers")
 def retailers():
-    return {
-        "items": [
+    groups = {}
+    for m in manifests().values():
+        item = groups.setdefault(
+            m.retailer_id,
             {
                 "id": m.retailer_id,
                 "name": m.name,
                 "support_status": m.audit_status if m.enabled else "disabled",
                 "capabilities": m.capabilities,
                 "message": m.scope_label,
-            }
-            for m in manifests().values()
-        ]
-        + UNSUPPORTED
+            },
+        )
+        if m.enabled:
+            item["support_status"] = m.audit_status
+    return {
+        "items": list(groups.values())
+        + [r for r in UNSUPPORTED if r["id"] not in groups]
     }
 
 

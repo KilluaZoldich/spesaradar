@@ -177,7 +177,7 @@ class Fetcher:
             timeout=httpx.Timeout(30, connect=10),
             headers={
                 "User-Agent": UA,
-                "Accept-Encoding": "gzip, deflate",
+                "Accept-Encoding": manifest.accept_encoding,
                 "Accept": "text/html,application/json,text/plain",
             },
         )
@@ -185,7 +185,7 @@ class Fetcher:
     def close(self):
         self.client.close()
 
-    def request(self, url, headers=None, robots=False):
+    def request(self, url, headers=None, robots=False, max_bytes=MAX_BYTES):
         for redirects in range(4):
             parsed = validate_url(url, self.m.allowed_domains)
             for attempt in range(3):
@@ -241,7 +241,9 @@ class Fetcher:
                                 "HTTP_ERROR", "Risorsa ufficiale non disponibile"
                             )
                         data = bounded_body(
-                            response, deadline=self.start + self.m.deadline_seconds
+                            response,
+                            limit=max_bytes,
+                            deadline=self.start + self.m.deadline_seconds,
                         )
                         if any(
                             x in data[:100000].lower()
@@ -276,7 +278,7 @@ class Fetcher:
         if host not in self.robots:
             _, _, _, body = self.request(f"https://{host}/robots.txt", robots=True)
             rp = RobotFileParser()
-            rp.parse(body.decode("utf-8", errors="replace").splitlines())
+            rp.parse(body.decode("utf-8-sig", errors="replace").splitlines())
             self.robots[host] = rp
             delay = rp.crawl_delay(UA)
             if delay:
@@ -290,11 +292,17 @@ class Fetcher:
             raise FetchError("ROBOTS_BLOCKED", "Raccolta esclusa dalla fonte")
 
     def fetch(self, url):
+        body, capture_id, final = self.fetch_bytes(url)
+        return body.decode("utf-8", errors="replace"), capture_id, final
+
+    def fetch_bytes(self, url, max_bytes=MAX_BYTES):
+        if not 0 < max_bytes <= 30 * 1024 * 1024:
+            raise FetchError("TOO_LARGE", "Limite risorsa non ammesso")
         self.check_robots(url)
         with Session() as s:
             previous = s.scalar(
                 select(CaptureRow)
-                .where(CaptureRow.url == url)
+                .where(CaptureRow.url == url, CaptureRow.source_id == self.m.source_id)
                 .order_by(CaptureRow.fetched_at.desc())
                 .limit(1)
             )
@@ -304,12 +312,14 @@ class Fetcher:
                 headers["If-None-Match"] = previous.etag
             if previous.modified:
                 headers["If-Modified-Since"] = previous.modified
-        final, status, meta, body = self.request(url, headers)
+        final, status, meta, body = self.request(url, headers, max_bytes=max_bytes)
         if status == 304:
             if not previous or not previous.path or not Path(previous.path).is_file():
                 raise FetchError(
                     "CACHE_MISSING", "Capture non disponibile per risposta 304"
                 )
+            if Path(previous.path).stat().st_size > max_bytes:
+                raise FetchError("TOO_LARGE", "Capture troppo grande")
             body = Path(previous.path).read_bytes()
             self.cache_hits += 1
         capture_id = uuid.uuid4().hex
@@ -333,7 +343,7 @@ class Fetcher:
                     or (previous.modified if previous else None),
                 )
             )
-        return body.decode("utf-8", errors="replace"), capture_id, final
+        return body, capture_id, final
 
 
 def retention():

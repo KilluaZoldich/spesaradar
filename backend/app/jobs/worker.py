@@ -2,81 +2,15 @@ import json
 import signal
 import threading
 import time
-from urllib.parse import urljoin
 
-from app.adapters.base import Batch, StructuralError
-from app.adapters.eurospin import EurospinAdapter
-from app.adapters.lidl import LidlAdapter
-from app.adapters.md import MDAdapter
+from app.adapters.base import StructuralError
+from app.adapters.registry import collect
 from app.config import manifests
 from app.jobs.queue import claim, fail, heartbeat, publish, schedule
 from app.security.fetch import Fetcher, FetchError, retention
 from app.storage.db import DB_PATH
-from bs4 import BeautifulSoup
 
 stop = threading.Event()
-
-
-def collect(m, fetcher, stage):
-    adapters = {"lidl": LidlAdapter, "eurospin": EurospinAdapter, "md": MDAdapter}
-    if m.retailer_id not in adapters:
-        raise StructuralError("Nessun connettore verificato per questa insegna")
-    adapter = adapters[m.retailer_id]()
-    entry = m.entry_urls[0]
-    html, cid, url = fetcher.fetch(entry)
-    if isinstance(adapter, MDAdapter):
-        catalog_url = adapter.resolve(html, m)
-        html, cid, url = fetcher.fetch(catalog_url)
-        stage("parse")
-        batch = adapter.extract(html, url, cid, m)
-        batch.visited.insert(0, entry)
-        return batch
-    if m.retailer_id != "lidl":
-        stage("parse")
-        return adapter.extract(html, url, cid)
-    soup = BeautifulSoup(html, "html.parser")
-    links = list(
-        dict.fromkeys(
-            urljoin(entry, a["href"])
-            for a in soup.select("a[href]")
-            if "/c/" in a["href"] and "-kw-" in a["href"] and "/a" in a["href"]
-        )
-    )
-    if not links:
-        raise StructuralError("Navigazione campagne Lidl non riconosciuta")
-    batch = Batch(completeness="complete", visited=[entry])
-    for link in links:
-        try:
-            stage("fetch")
-            html, cid, url = fetcher.fetch(link)
-            stage("parse")
-            part = adapter.extract(html, url, cid)
-            batch.offers.extend(part.offers)
-            batch.extracted += part.extracted
-            batch.quarantined += part.quarantined
-            batch.warnings.extend(part.warnings)
-            batch.visited.extend(part.visited)
-            batch.campaign_ids.extend(part.campaign_ids)
-            if part.completeness != "complete":
-                batch.completeness = "partial"
-        except FetchError as exc:
-            if exc.code in [
-                "BLOCKED_ACCESS",
-                "ROBOTS_BLOCKED",
-                "RATE_LIMITED",
-                "DESTINATION_BLOCKED",
-            ]:
-                raise
-            batch.failed.append(link)
-            batch.completeness = "partial"
-            if exc.code == "BUDGET":
-                break
-        except StructuralError:
-            batch.failed.append(link)
-            batch.completeness = "partial"
-    if not batch.offers:
-        raise StructuralError("Nessuna campagna Lidl verificabile")
-    return batch
 
 
 def run_job(job):

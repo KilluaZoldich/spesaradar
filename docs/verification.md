@@ -126,3 +126,26 @@ Evidenze: [selezione mobile](selection-expanded-mobile.png), [MD mobile](md-mobi
 [Workflow 34200562089](https://github.com/KilluaZoldich/spesaradar/actions/runs/34200562089) riuscito sul commit `0e37350`. MD raccolto direttamente dal runner GitHub: **105 offerte, 7 richieste, 12,61 s**, stato `partial`. Lidl ed Eurospin hanno riusato la cache valida senza ulteriori crawl. Snapshot pubblico delle 09:41:35 Europe/Rome: **555 offerte** (232 Lidl, 218 Eurospin, 105 MD), comprese le promozioni future; nessuna capture privata pubblicata.
 
 `PAGES_TEST_URL=https://killuazoldich.github.io/spesaradar/ npm --prefix apps/web run test:pages`: **4 passati in 5,3 s** sull’URL HTTPS, inclusi MD, carta, ricerca sede, preferenze, passaggio alle future, dettaglio, Axe e layout mobile. I 105 record MD pubblici corrispondono alla verifica locale per identità, prezzo, formato, condizioni, ambito, date, categoria e tag. [Evidenza di pubblicazione](expansion-deployment.json), [report browser remoto](pages-e2e-results.json). Eliminati anche i file grezzi dello scouting e le capture della verifica MD isolata; la retention ordinaria del worker locale rimane invariata.
+
+## Carpi e profilo PDF riutilizzabile — 8 settembre 2026
+
+Ambiente: Mac Apple Silicon, Python 3.13, Node 24, Docker Linux ARM64. Stesse immagini base fissate per digest del rilascio precedente. Nuova dipendenza diretta pdfplumber 0.11.10 e dipendenze transitive bloccate con uv; nessun aggiornamento indiscriminato dei pacchetti precedenti. Nessun browser/OCR/LLM nella nuova raccolta.
+
+- `uv add pdfplumber`, `uv export --frozen --no-dev --no-emit-project -o requirements.lock`: installazione e lock riusciti; Docker installa con `--require-hashes`.
+- `ruff check backend` e `ruff format backend`: superati dopo formattazione delle fixture nuove.
+- `.venv/bin/pytest -q`: **150 passed**, 1,25 s. Due avvisi di deprecazione già presenti nel client di test Starlette/httpx/AnyIO; non aggirati aggiornando dipendenze estranee.
+- `npm --prefix apps/web test`: **14 passed**. Build React/TypeScript ordinaria e statica riuscite.
+- `docker compose build`, `docker compose up -d` e riavvio del reverse proxy dopo la ricreazione API: immagini costruite, migrazioni riuscite e servizi avviati. Il comando Docker su questa macchina usa la configurazione separata per immagini pubbliche descritta in operations.
+- `POST /api/v1/refreshes` per le tre sedi Conad: job distinti, completati con esito `partial`. **100 offerte per sede**, ciascuna con 130 riquadri esaminati, 30 esclusi, 4 richieste HTTP, nessun errore risorsa. Durate **15,52 / 15,55 / 15,84 secondi**. [Contatori e campione](conad-sample.json).
+- `npm --prefix apps/web run test:e2e`: **9 passed**, 9,1 s, inclusi flussi deterministici e catalogo locale persistente.
+- `python -m app.source_tools scaffold-conad ...`: generato manifest candidato disabilitato in `.private`; nessun crawling o pubblicazione. `replay-conad ...` sulla campagna futura: rapporto diagnostico riuscito, 51 accettati. Lo stesso profilo serve le altre due sedi senza modifiche di codice.
+
+Il campione Conad è visivo: confrontate 50 schede con sette pagine renderizzate dei due PDF ufficiali, comprese varianti, formato, prezzo, carta e periodo. Applicabilità verificata dai collegamenti delle tre pagine sede. Nessun errore critico noto finale nel campione; non è una garanzia per layout futuri. Le 100 promozioni comuni alle tre sedi non vengono conteggiate come 300 promozioni diverse nella misura di copertura. In UI le offerte mantengono l’indirizzo della selezione.
+
+Correzioni emerse nella verifica: esclusione dei cataloghi colazione/premi dalla scelta delle due campagne principali; gestione delle date verticali; requisito carta sconosciuto se il badge non è presente; confronto unitario fra basi compatibili; categorie per omogeneizzati, affettati di pollame, pizza con salame e kebab vegetale. Test contro l’associazione al prezzo vicino, parte intera mancante, quantità/peso ambigui, cache di una sede usata per un’altra e robots UTF-8 con BOM.
+
+Limiti ancora espliciti: Coop Carpi e Interspar Carpi non acquisiti per accessi/formati non completati; niente scraping social; copertura PDF Conad selettiva; deadline PDF cooperativa fra pagine. Le immagini dei volantini non sono distribuite. [Audit](source-audit.md), [procedura di estensione](source-onboarding.md).
+
+Revisione separata del codice: corretti i tre rilievi su percorso POST non necessario (rimosso), legame fra nome PDF e URL prima/dopo i redirect, e pagine con periodi misti (escluse). Test di regressione aggiunti. Replay ripetuto dopo le correzioni: invariati 49 prodotti attuali e 51 futuri, circa 5,64 / 4,35 secondi.
+
+Prova statica locale con `VITE_BASE_PATH=/spesaradar/ vite preview --host 127.0.0.1 --port 8082`: 4 percorsi browser passati, inclusi CAP precompilato, tre sedi Carpi, prezzo/carta/fonte PDF, date future, zero overflow a 360 px e zero violazioni axe. Un primo tentativo usava directory/base errate per il server di anteprima; corretto l’avvio e ripetuta la prova. Screenshot: `carpi-selection-mobile.png`, `conad-mobile.png`.

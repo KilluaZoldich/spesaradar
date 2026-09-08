@@ -184,3 +184,51 @@ def test_redirect_releases_connection_before_new_host_robots(monkeypatch):
     assert f.request("https://www.lidl.it/")[3] == b"catalog"
     assert f.count == 3
     f.close()
+
+
+def test_robots_bom_is_respected(monkeypatch):
+    monkeypatch.setattr("app.security.fetch.time.sleep", lambda _: None)
+    f = Fetcher(
+        manifests()["lidl-national"],
+        httpx.MockTransport(
+            lambda _: response(body=b"\xef\xbb\xbfUser-agent: *\nDisallow: /private")
+        ),
+    )
+    with pytest.raises(FetchError, match="esclusa"):
+        f.fetch("https://www.lidl.it/private")
+
+
+def test_capture_cache_isolated_by_source(monkeypatch):
+    monkeypatch.setattr("app.security.fetch.time.sleep", lambda _: None)
+    requested = []
+
+    def handler(r):
+        if r.url.path == "/robots.txt":
+            return response(body=b"User-agent: *\nAllow: /")
+        requested.append(r.headers.get("if-none-match"))
+        return response(body=b"content", headers={"etag": "store-a"})
+
+    m = manifests()["lidl-national"]
+    for source in ["scope-a", "scope-b", "scope-a"]:
+        f = Fetcher(
+            m.model_copy(update={"source_id": source}), httpx.MockTransport(handler)
+        )
+        f.fetch("https://www.lidl.it/catalog")
+        f.close()
+    assert requested == [None, None, "store-a"]
+
+
+def test_binary_capture_limits_and_no_utf8_conversion(monkeypatch):
+    monkeypatch.setattr("app.security.fetch.time.sleep", lambda _: None)
+
+    def handler(r):
+        return response(
+            body=b"User-agent: *\nAllow: /"
+            if r.url.path == "/robots.txt"
+            else b"%PDF-\xff\xfe"
+        )
+
+    f = Fetcher(manifests()["lidl-national"], httpx.MockTransport(handler))
+    assert f.fetch_bytes("https://www.lidl.it/file.pdf")[0] == b"%PDF-\xff\xfe"
+    with pytest.raises(FetchError):
+        f.fetch_bytes("https://www.lidl.it/file.pdf", max_bytes=4)

@@ -5,7 +5,9 @@
       "/Users/metin/Projects/spesaradar/apps/web/node_modules/.bin/playwright",
       "test",
       "--config",
-      "playwright.pages.config.ts"
+      "playwright.pages.config.ts",
+      "--grep",
+      "Carpi|Pages live"
     ],
     "configFile": "/Users/metin/Projects/spesaradar/apps/web/playwright.pages.config.ts",
     "rootDir": "/Users/metin/Projects/spesaradar/tests/pages",
@@ -88,12 +90,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1435,
+                  "duration": 956,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T07:42:44.542Z",
+                  "startTime": "2026-09-08T08:33:51.776Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -122,12 +124,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 572,
+                  "duration": 526,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T07:42:46.212Z",
+                  "startTime": "2026-09-08T08:33:52.969Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -156,12 +158,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1334,
+                  "duration": 1254,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T07:42:46.789Z",
+                  "startTime": "2026-09-08T08:33:53.500Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -175,7 +177,7 @@
           "column": 5
         },
         {
-          "title": "Pages: nuova sede MD, carta e passaggio rapido alle offerte future",
+          "title": "Carpi 41012: sedi Conad, dati PDF e limiti Coop/Interspar",
           "ok": true,
           "tags": [],
           "tests": [
@@ -190,12 +192,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1371,
+                  "duration": 1872,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-08T07:42:48.128Z",
+                  "startTime": "2026-09-08T08:33:54.761Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -203,9 +205,9 @@
               "status": "expected"
             }
           ],
-          "id": "30aa42b97d8966d0c2dc-38695fac0365cdb5cca0",
+          "id": "30aa42b97d8966d0c2dc-825e911bb6c1519016c6",
           "file": "catalog.spec.ts",
-          "line": 109,
+          "line": 175,
           "column": 5
         }
       ]
@@ -213,8 +215,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-08T07:42:44.216Z",
-    "duration": 5313.848,
+    "startTime": "2026-09-08T08:33:51.394Z",
+    "duration": 5270.848,
     "expected": 4,
     "skipped": 0,
     "unexpected": 0,

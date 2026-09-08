@@ -1,0 +1,558 @@
+{
+  "checked_at": "2026-09-08",
+  "method": "Visual inspection of rendered official PDF pages against extracted product cells",
+  "sample_count": 50,
+  "known_critical_errors": 0,
+  "visible_promotional_areas_on_sample_pages": 75,
+  "published_on_sample_pages": 50,
+  "total_leaflet_coverage": "not measured",
+  "sources": [
+    "conad-000350",
+    "conad-000386",
+    "conad-010088"
+  ],
+  "campaigns": [
+    {
+      "period": "current",
+      "pdf_sha256": "599543903b7e0782a3f0b1fd916b136aa521e6ab11bb1374c1f47add7c82f505",
+      "accepted": 49,
+      "recognized_cells": 60,
+      "quarantined": 11,
+      "replay_seconds": 5.59
+    },
+    {
+      "period": "future",
+      "pdf_sha256": "ffb1f2b5ee23e9e2b6f9eb8611123886d856f53fa130f5fd338c72610d0de7f5",
+      "accepted": 51,
+      "recognized_cells": 70,
+      "quarantined": 19,
+      "replay_seconds": 4.29
+    }
+  ],
+  "sample": [
+    {
+      "id": "e30dd5ba832d10a13a7c7d557545c9ad",
+      "page": 2,
+      "campaign": "cno-20262618pconademilia",
+      "title": "PASTA FRESCA RIPIENA ANTICA BOTTEGA FINI — vari tipi",
+      "amount_cents": 197,
+      "package": "250 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "fb2b47ad4593b9c0bd7e9688aa38b8e9",
+      "page": 2,
+      "campaign": "cno-20262618pconademilia",
+      "title": "MOZZARELLA CARAMELLA DI BUFALA FATTORIE GAROFALO — con cuore di ricotta",
+      "amount_cents": 158,
+      "package": "125 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "0dd32f52041345f2e72679bc9bb67829",
+      "page": 2,
+      "campaign": "cno-20262618pconademilia",
+      "title": "FORMAGGIO FRESCO PRIMOSALE LINEA FATTORIE OSELLA — classico con fermenti lattici vivi",
+      "amount_cents": 189,
+      "package": "190 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "41aebd9412e4152963b46fdfefdfca6f",
+      "page": 2,
+      "campaign": "cno-20262618pconademilia",
+      "title": "BURGER, MINIBURGER KIOENE — vari tipi un esempio: burger con carciofi e pomodori secchi",
+      "amount_cents": 199,
+      "package": "200 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "fa7d8479a02f4bb17d06d595bd254179",
+      "page": 2,
+      "campaign": "cno-20262618pconademilia",
+      "title": "MOZZARELLE BOCCONCINI RIPIENI VALLELATA",
+      "amount_cents": 229,
+      "package": "180 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "5ff2e91450e8b54b967ab64519353b20",
+      "page": 2,
+      "campaign": "cno-20262618pconademilia",
+      "title": "FIOCCHI DI LATTE SANTA LUCIA GALBANI",
+      "amount_cents": 119,
+      "package": "180 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "c3642d84288a2fbf0d2e2c5b9f3e9f00",
+      "page": 2,
+      "campaign": "cno-20262618pconademilia",
+      "title": "GRANA PADANO FERRARI — grattugiato",
+      "amount_cents": 99,
+      "package": "60 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "fa6f39b67580967407bcb00690b437d6",
+      "page": 2,
+      "campaign": "cno-20262618pconademilia",
+      "title": "IL GUANCIALE STICK FRATELLI BERETTA — conf.",
+      "amount_cents": 171,
+      "package": "2 x 60 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "a1eb37ae02e090e26680699b0c33ab0f",
+      "page": 4,
+      "campaign": "cno-20262618pconademilia",
+      "title": "ACQUA S. PELLEGRINO — minerale frizzante",
+      "amount_cents": 69,
+      "package": "1 l",
+      "loyalty_required": true
+    },
+    {
+      "id": "d3476e2a563c36d5da1d8575f6d542c8",
+      "page": 4,
+      "campaign": "cno-20262618pconademilia",
+      "title": "OMOGENEIZZATI ALLA CARNE MELLIN — 100% naturale vari tipi conf.",
+      "amount_cents": 169,
+      "package": "2 x 80 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "e68c6ca346e6f37567583315d7a66159",
+      "page": 4,
+      "campaign": "cno-20262618pconademilia",
+      "title": "BARRETTE DI CEREALI SPECIAL K KELLOGG’S — vari tipi e grammature un esempio: con cioccolato belga al latte",
+      "amount_cents": 219,
+      "package": "120 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "8f8d8dd6020cd1532f55fa9b3fdc67c3",
+      "page": 4,
+      "campaign": "cno-20262618pconademilia",
+      "title": "CROISSANT BAULI — classico",
+      "amount_cents": 145,
+      "package": "240 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "775e64d529100906548df1a9f6b48618",
+      "page": 4,
+      "campaign": "cno-20262618pconademilia",
+      "title": "PRINGLES — vari tipi un esempio: original",
+      "amount_cents": 229,
+      "package": "185 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "f34f2ae99dd7e2520dcb0958c0b6dc42",
+      "page": 4,
+      "campaign": "cno-20262618pconademilia",
+      "title": "RED BULL — vari tipi",
+      "amount_cents": 119,
+      "package": "250 ml",
+      "loyalty_required": true
+    },
+    {
+      "id": "98db4ff9c0d6d51d403298fd968b6de6",
+      "page": 4,
+      "campaign": "cno-20262618pconademilia",
+      "title": "COCA COLA — vari tipi",
+      "amount_cents": 189,
+      "package": "1,5 l",
+      "loyalty_required": true
+    },
+    {
+      "id": "811ba23a4f4cb0ee0533219be0e075c1",
+      "page": 4,
+      "campaign": "cno-20262618pconademilia",
+      "title": "LAMBRUSCO SORBARA, LAMBRUSCO SALAMINO, LAMBRUSCO GRASPAROSSA SOZZIGALLI",
+      "amount_cents": 229,
+      "package": "750 ml",
+      "loyalty_required": true
+    },
+    {
+      "id": "e66e1f52f4ea63e55d007368cfca7864",
+      "page": 16,
+      "campaign": "cno-20262618pconademilia",
+      "title": "PINSA MULINO BIANCO BARILLA",
+      "amount_cents": 178,
+      "package": "230 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "aa6f445402b5a9b0109e9460a843ce02",
+      "page": 16,
+      "campaign": "cno-20262618pconademilia",
+      "title": "MAIS BONDUELLE — cotto al vapore conf.",
+      "amount_cents": 259,
+      "package": "3 x 140 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "e6a0aa79177908d1d0aa662c4e3d84ec",
+      "page": 16,
+      "campaign": "cno-20262618pconademilia",
+      "title": "POLPA DI DATTERINI MUTTI — in pezzi conf.",
+      "amount_cents": 241,
+      "package": "3 x 300 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "20b88e3651524e9b0d7cb2202d7f21d5",
+      "page": 16,
+      "campaign": "cno-20262618pconademilia",
+      "title": "OLIO DI SEMI DI GIRASOLE GIGLIO ORO",
+      "amount_cents": 229,
+      "package": "1 l",
+      "loyalty_required": true
+    },
+    {
+      "id": "64fa4a4753e62963d7ff2814bd917205",
+      "page": 16,
+      "campaign": "cno-20262618pconademilia",
+      "title": "GRAN PESTO, SALSA, SUGO TIGULLIO — un esempio: gran pesto alla genovese senza aglio",
+      "amount_cents": 209,
+      "package": "190 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "9ca12418c491b3f8f071f212d7f75db3",
+      "page": 16,
+      "campaign": "cno-20262618pconademilia",
+      "title": "OLIO EXTRA VERGINE DI OLIVA ZERO COSTA D’ORO — zero pesticidi residui estratto a freddo",
+      "amount_cents": 599,
+      "package": "750 ml",
+      "loyalty_required": true
+    },
+    {
+      "id": "6f428cdfd45a9bf5857b1fc4d02887d7",
+      "page": 18,
+      "campaign": "cno-20262618pconademilia",
+      "title": "TYROLINI HANDL TYROL — vari tipi",
+      "amount_cents": 149,
+      "package": "40 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "8da6ec2efd0cc0a1fc76babdd756917f",
+      "page": 18,
+      "campaign": "cno-20262618pconademilia",
+      "title": "YOGURT SUPER MARIO DANONE — fragola, banana conf.",
+      "amount_cents": 109,
+      "package": "2 x 110 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "0ded93eaa42d54fae6ba9cfad205dbbb",
+      "page": 18,
+      "campaign": "cno-20262618pconademilia",
+      "title": "FRUTTOLO MAXI DUO NESTLÉ — fragola vaniglia, fragola fi or di latte conf.",
+      "amount_cents": 183,
+      "package": "4 x 100 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "a40435f53bd00f91b6f8c4a722763320",
+      "page": 18,
+      "campaign": "cno-20262618pconademilia",
+      "title": "PANPIUMINO ARTEBIANCA — biologico",
+      "amount_cents": 198,
+      "package": "300 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "260b85710a7af7786ee4fb46fcadeee4",
+      "page": 18,
+      "campaign": "cno-20262618pconademilia",
+      "title": "SCHIACCIATINE CONAD — al rosmarino, classiche",
+      "amount_cents": 159,
+      "package": "300 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "f2dd5767d6d8697a98e272243721784a",
+      "page": 18,
+      "campaign": "cno-20262618pconademilia",
+      "title": "SQUEEZ MELINDA — vari tipi conf. da",
+      "amount_cents": 77,
+      "package": "90 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "b9f608233ecfffaf665e0b29cf5d6914",
+      "page": 3,
+      "campaign": "cno-20262619pconademilia",
+      "title": "POLPA DI POMODORO IN PEZZI MUTTI — conf.",
+      "amount_cents": 219,
+      "package": "3 x 400 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "2221c7103869a159f9dcf7c86bf1b188",
+      "page": 3,
+      "campaign": "cno-20262619pconademilia",
+      "title": "SALSA PRONTA MUTTI — vari tipi un esempio: ciliegini",
+      "amount_cents": 135,
+      "package": "300 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "acc9fc77ac366829f444e201c49315ca",
+      "page": 3,
+      "campaign": "cno-20262619pconademilia",
+      "title": "MAYONNAISE KRAFT",
+      "amount_cents": 215,
+      "package": "490 ml",
+      "loyalty_required": true
+    },
+    {
+      "id": "a90580f7da3ceb4ae01aedea89815a2e",
+      "page": 3,
+      "campaign": "cno-20262619pconademilia",
+      "title": "CAFFÈ CREMA E GUSTO LAVAZZA — classico conf.",
+      "amount_cents": 690,
+      "package": "2 x 250 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "330f26b371c4c9f6991d615794a46052",
+      "page": 3,
+      "campaign": "cno-20262619pconademilia",
+      "title": "CAPSULE CAFFÈ COMPATIBILI NESPRESSO KIMBO — vari tipi",
+      "amount_cents": 699,
+      "package": "165 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "b6c25ce5255eac626e0653591e47e9e8",
+      "page": 3,
+      "campaign": "cno-20262619pconademilia",
+      "title": "CEREALI PRIMA COLAZIONE FITNESS NESTLÉ — original",
+      "amount_cents": 199,
+      "package": "375 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "9606c3908822070e8b0e9d6744748fd4",
+      "page": 3,
+      "campaign": "cno-20262619pconademilia",
+      "title": "PLUMCAKE MULINO BIANCO BARILLA — con yogurt",
+      "amount_cents": 139,
+      "package": "330 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "6516c564dbc942780c55bba9a4077a49",
+      "page": 3,
+      "campaign": "cno-20262619pconademilia",
+      "title": "BISCOTTO SALUTE MONVISO — classico, integrale",
+      "amount_cents": 229,
+      "package": "400 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "d7caab41c0d06dbb15edf6231adcd5cb",
+      "page": 5,
+      "campaign": "cno-20262619pconademilia",
+      "title": "PESCA LEONFORTE IGP — conf. da",
+      "amount_cents": 347,
+      "package": "800 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "5212de6f6b108e9be853cb648350c3cb",
+      "page": 5,
+      "campaign": "cno-20262619pconademilia",
+      "title": "CARTA DELLE INSALATE BONDUELLE — ricetta gustosa, deliziosa, vivace un esempio: gustosa conf. da",
+      "amount_cents": 137,
+      "package": "150 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "ad0fab6eee821d86bcff71ad3e0e7289",
+      "page": 5,
+      "campaign": "cno-20262619pconademilia",
+      "title": "FARRO PERLATO COLFIORITO — 100% prodotto italiano conf. da",
+      "amount_cents": 157,
+      "package": "400 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "9edaacf03834eb97c7e877e973a7498d",
+      "page": 5,
+      "campaign": "cno-20262619pconademilia",
+      "title": "MANGO SAPORI&IDEE CONAD — Categoria I conf. da",
+      "amount_cents": 167,
+      "package": "380 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "ee8b4252d0c3b5d37c6d472bf0c7ddb1",
+      "page": 5,
+      "campaign": "cno-20262619pconademilia",
+      "title": "ARACHIDI TOSTATE LIFE — conf. da",
+      "amount_cents": 377,
+      "package": "750 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "a62397de2b53020edda19ff38c14c56c",
+      "page": 5,
+      "campaign": "cno-20262619pconademilia",
+      "title": "PATATE VIOLA SAPORI&IDEE CONAD PERCORSO QUALITÀ — Filiera Controllata prodotto italiano conf. da",
+      "amount_cents": 87,
+      "package": "600 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "eafd4e50dff3f0c6cb86bb522ca97199",
+      "page": 10,
+      "campaign": "cno-20262619pconademilia",
+      "title": "FRUTTOLO NESTLÉ — gusti assortiti, fragola pera e banana conf.",
+      "amount_cents": 129,
+      "package": "6 x 50 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "8fe632fa603bbabffa035ebb57b2709e",
+      "page": 10,
+      "campaign": "cno-20262619pconademilia",
+      "title": "CARPACCIO DI BRESAOLA, DI ANGUS RIGAMONTI",
+      "amount_cents": 298,
+      "package": "90 g",
+      "loyalty_required": null
+    },
+    {
+      "id": "9fd1d076fb899ea36a04042af7b888c4",
+      "page": 10,
+      "campaign": "cno-20262619pconademilia",
+      "title": "AFFETTATI AEQUILIBRIUM AIA — vari tipi e grammature un esempio: petto di pollo al forno",
+      "amount_cents": 178,
+      "package": "130 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "977dd0389be5df62417b77db1d27cbf9",
+      "page": 10,
+      "campaign": "cno-20262619pconademilia",
+      "title": "CUBETTI PANCETTA FRATELLI BERETTA — dolce, aff umicata",
+      "amount_cents": 239,
+      "package": "140 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "e1ebc6ab6c6f67fd7ae60c032bf0fa4d",
+      "page": 10,
+      "campaign": "cno-20262619pconademilia",
+      "title": "GELATO CONAD PIACERSI — senza lattosio senza zuccheri aggiunti vari tipi",
+      "amount_cents": 239,
+      "package": "250 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "a468056af41f7b3aaf32809da14947d0",
+      "page": 10,
+      "campaign": "cno-20262619pconademilia",
+      "title": "PIZZA RISTORANTE CAMEO — vari tipi e grammature un esempio: salame",
+      "amount_cents": 239,
+      "package": "320 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "a459db32834b4802bfd638bd2a9c7425",
+      "page": 10,
+      "campaign": "cno-20262619pconademilia",
+      "title": "MINI STECCO CONAD — mandorle bianco e latte, variegato cioccolato al latte e granella di nocciola",
+      "amount_cents": 299,
+      "package": "300 g",
+      "loyalty_required": true
+    },
+    {
+      "id": "c25eb192b50b8ee371f7e7925a31eb4a",
+      "page": 10,
+      "campaign": "cno-20262619pconademilia",
+      "title": "LINEA PLANTED — prodotti assortiti un esempio: kebab 100% vegetale",
+      "amount_cents": 298,
+      "package": "160 g",
+      "loyalty_required": true
+    }
+  ],
+  "local_live_jobs": [
+    {
+      "target_id": "conad-000350",
+      "source_id": "conad-000350",
+      "disposition": "job_new",
+      "job_id": "19c037b869db415e95d07d7e4f3955da",
+      "next_allowed_at": 1788857675.0918272,
+      "state": "partial",
+      "stage": "published",
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "counters": {
+        "extracted": 130,
+        "published": 100,
+        "limited": 100,
+        "quarantined": 30,
+        "duplicate_count": 0,
+        "resources": 3,
+        "failed_resources": 0,
+        "requests": 4,
+        "cache_hits": 0,
+        "duration_seconds": 15.52,
+        "browser": 0,
+        "ocr": 0
+      }
+    },
+    {
+      "target_id": "conad-000386",
+      "source_id": "conad-000386",
+      "disposition": "job_new",
+      "job_id": "d1f3fa520fd0458fb64f0b17e2ea0e1c",
+      "next_allowed_at": 1788857675.0918272,
+      "state": "partial",
+      "stage": "published",
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "counters": {
+        "extracted": 130,
+        "published": 100,
+        "limited": 100,
+        "quarantined": 30,
+        "duplicate_count": 0,
+        "resources": 3,
+        "failed_resources": 0,
+        "requests": 4,
+        "cache_hits": 0,
+        "duration_seconds": 15.55,
+        "browser": 0,
+        "ocr": 0
+      }
+    },
+    {
+      "target_id": "conad-010088",
+      "source_id": "conad-010088",
+      "disposition": "job_new",
+      "job_id": "316a797714ed4671a99af4290601e5b5",
+      "next_allowed_at": 1788857675.0918272,
+      "state": "partial",
+      "stage": "published",
+      "message": "Aggiornamento parziale: alcuni articoli non sono verificabili",
+      "counters": {
+        "extracted": 130,
+        "published": 100,
+        "limited": 100,
+        "quarantined": 30,
+        "duplicate_count": 0,
+        "resources": 3,
+        "failed_resources": 0,
+        "requests": 4,
+        "cache_hits": 0,
+        "duration_seconds": 15.84,
+        "browser": 0,
+        "ocr": 0
+      }
+    }
+  ]
+}

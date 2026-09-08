@@ -117,12 +117,21 @@ function SourceStatus({ states }: { states: SourceState[] }) {
   );
 }
 export default function App() {
-  const [targetQuery, setTargetQuery] = useState("");
+  const [targetQuery, setTargetQuery] = useState(() => {
+    const cap = new URLSearchParams(window.location.search).get("cap") || "";
+    return /^\d{5}$/.test(cap) ? cap : "";
+  });
   const [maxSelections, setMaxSelections] = useState(5);
   const [targets, setTargets] = useState<Target[]>([]),
     [categories, setCategories] = useState<{ id: string; label: string }[]>([]),
     [retailers, setRetailers] = useState<
-      { id: string; name: string; message: string; support_status: string }[]
+      {
+        id: string;
+        name: string;
+        message: string;
+        support_status: string;
+        source_url?: string;
+      }[]
     >([]);
   const [selected, setSelected] = useState<string[]>([]),
     [draft, setDraft] = useState<string[]>([]),
@@ -526,7 +535,7 @@ export default function App() {
                 <input
                   value={targetQuery}
                   onChange={(e) => setTargetQuery(e.target.value)}
-                  placeholder="Cerca insegna o sede…"
+                  placeholder="Cerca insegna, comune o CAP…"
                   maxLength={120}
                 />
                 {targetQuery && (
@@ -650,6 +659,16 @@ export default function App() {
                   .map((r) => (
                     <p key={r.id}>
                       <strong>{r.name}</strong> · {r.message}
+                      {r.source_url && (
+                        <a
+                          href={r.source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {" "}
+                          Sede ufficiale
+                        </a>
+                      )}
                     </p>
                   ))}
                 <p>

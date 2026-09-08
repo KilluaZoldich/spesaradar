@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -11,7 +11,7 @@ class Manifest(BaseModel):
     source_id: str
     retailer_id: str
     name: str
-    source_type: Literal["html"]
+    source_type: Literal["html", "text_pdf"]
     parser_version: str
     allowed_domains: list[str]
     entry_urls: list[str]
@@ -35,6 +35,21 @@ class Manifest(BaseModel):
     cooldown_seconds: int = Field(ge=1800)
     suspend_on: list[int]
     timeout_seconds: int = Field(le=30)
+    connector: Literal["lidl", "eurospin", "md", "conad_pdf"] | None = None
+    store_id: str | None = None
+    campaign_title_suffix: str | None = None
+    max_documents: int = Field(default=2, ge=1, le=3)
+    accept_encoding: Literal["gzip, deflate", "identity"] = "gzip, deflate"
+
+    @model_validator(mode="after")
+    def admitted(self):
+        if self.enabled and self.audit_status not in ["partial", "verified_supported"]:
+            raise ValueError("Una fonte deve superare l’audit prima dell’abilitazione")
+        if self.connector == "conad_pdf" and (
+            not self.store_id or not self.campaign_title_suffix
+        ):
+            raise ValueError("Profilo Conad privo di sede o ambito campagna")
+        return self
 
 
 def manifests():
