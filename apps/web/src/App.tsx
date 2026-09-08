@@ -431,7 +431,7 @@ export default function App() {
         {STATIC_CATALOG && (
           <p className="publication-note">
             Versione online · Offerte aggiornate periodicamente. Raccolta
-            programmata due volte al giorno, con possibili ritardi.
+            ogni 12 ore circa, con possibili ritardi.
           </p>
         )}
         {offline && (

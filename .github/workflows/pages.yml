@@ -20,7 +20,7 @@ jobs:
       publish: ${{ steps.catalog.outputs.publish }}
     env:
       PYTHONPATH: backend
-      SPESARADAR_DB: ${{ runner.temp }}/spesaradar/catalog.db
+      SPESARADAR_DB: .private/pages.db
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
