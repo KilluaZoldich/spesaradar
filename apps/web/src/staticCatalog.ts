@@ -224,6 +224,7 @@ export function queryCatalog(
   };
 }
 let snapshotPromise: Promise<Snapshot> | undefined;
+let requestedAt = 0;
 let anchor = { server: Date.now(), monotonic: performance.now() };
 const clock = () => anchor.server + performance.now() - anchor.monotonic;
 export function reloadSnapshot() {
@@ -231,7 +232,10 @@ export function reloadSnapshot() {
   return loadSnapshot();
 }
 function loadSnapshot(): Promise<Snapshot> {
-  if (!snapshotPromise)
+  if (snapshotPromise && performance.now() - requestedAt > 60000)
+    snapshotPromise = undefined;
+  if (!snapshotPromise) {
+    requestedAt = performance.now();
     snapshotPromise = fetch(import.meta.env.BASE_URL + "catalog.json", {
       cache: "no-cache",
     })
@@ -262,6 +266,7 @@ function loadSnapshot(): Promise<Snapshot> {
         snapshotPromise = undefined;
         throw error;
       });
+  }
   return snapshotPromise;
 }
 export async function staticApi<T>(

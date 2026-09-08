@@ -14,7 +14,7 @@ Il primo catalogo di riserva in `site/bootstrap.json` proviene dal database loca
 
 ## Freschezza e limiti
 
-Il feed esclude immediatamente offerte scadute e dati verificati da oltre 48 ore; oltre 12 ore espone l’avviso di dato non recente. La data di pubblicazione del file non sostituisce la verifica del prodotto. I controlli vengono ricalcolati nelle letture e dopo resume. La versione locale Docker conserva le API e i job durevoli originali.
+Il feed esclude immediatamente offerte scadute e dati verificati da oltre 48 ore; oltre 12 ore espone l’avviso di dato non recente. La data di pubblicazione del file non sostituisce la verifica del prodotto. I controlli vengono ricalcolati nelle letture e dopo resume. La copia nel browser viene ricontrollata dopo un minuto nelle letture successive, condividendo il download fra filtri e metadati. La versione locale Docker conserva le API e i job durevoli originali.
 
 In Actions SQLite e capture sono temporanei e non vengono caricati negli artifact. La persistenza remota è la sola rappresentazione normalizzata JSON, pubblicata atomicamente con gli asset. Un crash prima del deploy lascia la precedente versione: non offre la stessa persistenza dei job a metà esecuzione del worker locale. Concorrenza serializzata, timeout del workflow e frequenza pianificata limitano i tentativi; non è un backend sempre acceso.
 
@@ -40,3 +40,7 @@ cp site/bootstrap.json apps/web/dist/catalog.json
 ```
 
 Per raccogliere da ambiente isolato: configurare `SPESARADAR_DB` in una cartella temporanea, eseguire migrazioni e `PYTHONPATH=backend python -m app.pages --restore previous.json --collect --export catalog.json`. Non puntare questo comando al database locale già in uso. L’export non accetta fixture sintetiche né URL fuori dai manifest; le evidenze pubbliche escludono capture e percorsi privati.
+
+## Verifica eseguita
+
+Prima raccolta e deploy remoti riusciti: [run](https://github.com/KilluaZoldich/spesaradar/actions/runs/34195536421), 450 prodotti reali da entrambe le insegne, artifact compresso 188.518 byte e retention 1 giorno. [Rapporto ed evidenze](verification.md#pubblicazione-remota--8-settembre-2026). Test del sito: `PAGES_TEST_URL=https://killuazoldich.github.io/spesaradar/ npm --prefix apps/web run test:pages`.

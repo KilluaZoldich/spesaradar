@@ -1,0 +1,14 @@
+
+> spesaradar-web@0.1.0 test:pages
+> playwright test --config playwright.pages.config.ts
+
+
+Running 3 tests using 1 worker
+
+(node:41860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 ../../tests/pages/catalog.spec.ts:15:5 › Pages live: ricerca, categorie, dettaglio, aggiornamento e nessuna API (961ms)
+  ✓  2 ../../tests/pages/catalog.spec.ts:56:5 › Pages live: futuro, Eurospin, prezzo compatibile e mobile (538ms)
+  ✓  3 ../../tests/pages/catalog.spec.ts:84:5 › Pages live: accessibilità e snapshot senza capture private (1.3s)
+
+  3 passed (3.4s)

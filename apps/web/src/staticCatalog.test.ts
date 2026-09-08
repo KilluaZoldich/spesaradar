@@ -1,5 +1,10 @@
-import { describe, expect, it } from "vitest";
-import { queryCatalog, type Snapshot } from "./staticCatalog";
+import { describe, expect, it, vi } from "vitest";
+import {
+  queryCatalog,
+  staticApi,
+  reloadSnapshot,
+  type Snapshot,
+} from "./staticCatalog";
 // Synthetic records, restricted to this test module. No export into the live site.
 const now = Date.parse("2026-09-08T10:00:00Z");
 function record(
@@ -162,4 +167,32 @@ describe("Catalogo pubblicato su Pages", () => {
     s.records[1].offer.quality = "quarantined";
     expect(queryCatalog(s, params(), now).total).toBe(1);
   });
+});
+
+it("ricarica la pubblicazione dopo un minuto senza avviare raccolte", async () => {
+  let elapsed = 0;
+  vi.spyOn(performance, "now").mockImplementation(() => elapsed);
+  const fetchMock = vi.fn(
+    async () =>
+      new Response(JSON.stringify(snapshot()), {
+        status: 200,
+        headers: { date: new Date(now).toUTCString() },
+      }),
+  );
+  vi.stubGlobal("fetch", fetchMock);
+  try {
+    await reloadSnapshot();
+    await staticApi("/categories");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    elapsed = 61000;
+    await staticApi("/categories");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    await expect(staticApi("/refreshes", { method: "POST" })).rejects.toThrow(
+      "programmata",
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  } finally {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  }
 });
