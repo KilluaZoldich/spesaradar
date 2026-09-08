@@ -1,0 +1,13 @@
+{
+  "run_url": "https://github.com/KilluaZoldich/spesaradar/actions/runs/34216670126",
+  "code_commit": "05e31c1c173071cb10cc6332ed195c6d2ad5c614",
+  "generated_at": "2026-09-08T10:40:36.145283+00:00",
+  "product_scope_records": 1160,
+  "coupons": 1,
+  "coupon_last_verified_at": "2026-09-08T10:24:37.335767Z",
+  "coupon_all_fields_match_reviewed_native_capture": true,
+  "remote_coop_state": "blocked",
+  "remote_last_success": null,
+  "remote_failure_metadata_unchanged": true,
+  "previous_remote_block_run": "https://github.com/KilluaZoldich/spesaradar/actions/runs/34215716567"
+}
