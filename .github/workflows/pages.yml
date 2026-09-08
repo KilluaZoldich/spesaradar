@@ -48,7 +48,7 @@ jobs:
             exit 1
           fi
           python -m alembic upgrade head
-          python -m app.pages --restore .private/previous.json --collect "${probe[@]}" --export .private/catalog.json
+          python -m app.pages --restore .private/previous.json --reviewed-cache site/reviewed-cache.json --collect "${probe[@]}" --export .private/catalog.json
           python - <<'PY'
           import json, os
           from pathlib import Path

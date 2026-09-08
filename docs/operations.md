@@ -86,3 +86,8 @@ docker compose -f compose.yaml -f compose.restore.yaml up -d
 ```
 
 Il database precedente resta nel volume. Per tornare al precedente usa il Compose originale dopo aver fermato i servizi. Non cancellare file WAL/SHM di un database in uso.
+
+
+### Cache Coop già verificata
+
+Il workflow può ammettere `site/reviewed-cache.json` dopo il ripristino dello snapshot pubblico. È un'eccezione limitata al singolo buono Coop acquisito prima del 403 GitHub: il codice verifica l'hash canonico dell'intero record. Non modificare date per prolungarne la visibilità; scade dal feed a 48 ore dalla verifica originale. Il file non contiene capture grezze e non azzera il blocco della fonte. Nuovi dati richiedono raccolta consentita e audit, non aggiornamento manuale dei prezzi.

@@ -105,3 +105,6 @@ La revisione dell’interfaccia con Build Web Apps, le schermate desktop/mobile 
 [Guida ai profili e al replay offline](docs/source-onboarding.md): aggiungere una sede Conad dello stesso formato richiede un manifest verificato, senza duplicare parser, worker o interfaccia. Il comando di scaffolding crea fonti disabilitate; il replay produce un rapporto diagnostico senza effettuare richieste o pubblicare prezzi.
 
 Per sviluppare connettori più rapidamente senza nuove richieste a ogni modifica, usa i [profili e il replay offline](docs/architecture.md#aggiunta-rapida-di-profili-di-estrazione). La UI e la coda non cambiano per ogni nuova insegna.
+
+
+Coop su Pages: il runner GitHub ha ricevuto un 403. Il singolo buono già verificato localmente l'8 settembre 2026 alle 10:24 UTC è conservato temporaneamente con il suo timestamp originale e l'avviso di aggiornamento bloccato; sparisce dal feed dopo 48 ore senza verifica. La raccolta automatica remota Coop e il catalogo prodotti Coop non sono completati.

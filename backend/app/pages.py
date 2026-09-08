@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import time
 import uuid
@@ -17,6 +18,12 @@ from app.domain.catalog import Offer, temporal, utcnow
 from app.jobs.queue import claim, enqueue
 from app.jobs.worker import run_job
 from app.storage.db import Job, OfferRow, Session, SourceRow
+
+# One audited native capture, including its original verification instant.
+# Changing these facts requires a new source audit, never a timestamp edit.
+REVIEWED_COOP_SHA256 = (
+    "17dfb3efbf192edb906e38bddb92c989add556e9332b208fea327587f7dae7bd"
+)
 
 MAX_BYTES = 10 * 1024 * 1024
 SOURCE_FIELDS = (
@@ -155,6 +162,73 @@ def restore_snapshot(path):
             )
 
 
+def restore_reviewed_records(path):
+    """Admit already verified facts as old cache; never reset remote source health.
+
+    Maintainer-only file from a successful local run. This does not fetch, renew
+    timestamps, unwithdraw records, or override a newer successful source scan.
+    """
+    path = Path(path)
+    if path.stat().st_size > MAX_BYTES:
+        raise ValueError("Cache verificata troppo grande")
+    snapshot = json.loads(path.read_text())
+    if snapshot.get("schema_version") != 1 or len(snapshot.get("records", [])) != 1:
+        raise ValueError("Cache verificata non compatibile")
+    # Validate the entire input before any write, and discard private evidence.
+    offers = [
+        safe_offer(record["offer"])
+        for record in snapshot["records"]
+        if not record.get("withdrawn")
+    ]
+    for data in offers:
+        digest = hashlib.sha256(
+            json.dumps(
+                data, sort_keys=True, ensure_ascii=False, separators=(",", ":")
+            ).encode()
+        ).hexdigest()
+        if digest != REVIEWED_COOP_SHA256:
+            raise ValueError(
+                "Cache diversa dal buono Coop verificato: richiesto nuovo audit"
+            )
+    now = utcnow()
+    admitted = 0
+    with Session.begin() as s:
+        for data in offers:
+            state, freshness = temporal(data, now)
+            if (
+                state == "expired"
+                or freshness == "hidden"
+                or s.get(OfferRow, data["id"])
+            ):
+                continue
+            source = s.get(SourceRow, data["source_id"])
+            verified = Offer.model_validate(data).last_verified_at.timestamp()
+            if (
+                source is None
+                or source.last_success is not None
+                and source.last_success > verified
+            ):
+                continue
+            s.add(
+                OfferRow(
+                    id=data["id"],
+                    source_id=data["source_id"],
+                    campaign_id=data["campaign_id"],
+                    payload=data,
+                )
+            )
+            source.revision += 1
+            admitted += 1
+    print(
+        json.dumps(
+            {
+                "reviewed_cache_admitted": admitted,
+                "verification_timestamps_renewed": False,
+            }
+        )
+    )
+
+
 def collect_once(initial_probe=False):
     ids = [id for id, m in manifests().items() if m.enabled]
     _, entries = enqueue(ids)
@@ -185,10 +259,13 @@ def main():
     parser.add_argument("--restore", type=Path)
     parser.add_argument("--export", type=Path, required=True)
     parser.add_argument("--collect", action="store_true")
+    parser.add_argument("--reviewed-cache", type=Path)
     parser.add_argument("--initial-probe", action="store_true")
     args = parser.parse_args()
     if args.restore:
         restore_snapshot(args.restore)
+    if args.reviewed_cache:
+        restore_reviewed_records(args.reviewed_cache)
     if args.collect:
         collect_once(args.initial_probe)
     export_snapshot(args.export)

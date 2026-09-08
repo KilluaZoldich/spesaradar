@@ -191,7 +191,9 @@ test("Carpi 41012: una voce Conad, cambio sede e nuove insegne", async ({
   await expect(page.locator('[data-retailer="famila"]')).toBeVisible();
   await expect(page.locator('[data-retailer="despar"]')).toBeVisible();
   await page.locator(".unsupported summary").click();
-  await expect(page.locator('[data-retailer="coop"]')).toContainText("Solo buoni e vantaggi");
+  await expect(page.locator('[data-retailer="coop"]')).toContainText(
+    "Solo buoni e vantaggi",
+  );
   await expect(page.locator(".unsupported")).toContainText("Sigma");
   await expect(page.locator(".unsupported")).toContainText("non acquisite");
   await page.screenshot({ path: "../../docs/carpi-selection-mobile.png" });
@@ -299,6 +301,17 @@ test("Coop Carpi: solo buoni, beneficio separato e condizioni visibili", async (
     .click();
   const card = page.locator(".coupon-card");
   await expect(card).toHaveCount(1);
+  const snapshot = await (await page.request.get("./catalog.json")).json();
+  if (
+    snapshot.sources.find(
+      (s: { source_id: string; state: string }) =>
+        s.source_id === "coop-carpi-buoni",
+    )?.state === "blocked"
+  ) {
+    await expect(
+      page.getByText("Accesso alla fonte non consentito", { exact: true }),
+    ).toBeVisible();
+  }
   await expect(card.getByRole("heading")).toHaveText("10,00 € di buono");
   await expect(card).toContainText("20 settembre 2026");
   await expect(card).toContainText("7 ottobre 2026");

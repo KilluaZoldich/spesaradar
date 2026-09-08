@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-08T10:24:37.342938+00:00",
+  "records": [
+    {
+      "offer": {
+        "id": "8cb3449cc1254e32f6ff3dfe0b43efb8",
+        "data_origin": "official_live",
+        "offer_type": "future_voucher",
+        "retailer_id": "coop",
+        "source_id": "coop-carpi-buoni",
+        "source_offer_id": "spendi-riprendi-scuola.html",
+        "campaign_id": "cartoleria-2026",
+        "target_ids": [
+          "coop-carpi-buoni"
+        ],
+        "title": "Spendi 30€ di cartoleria & riprendi 10€",
+        "title_normalized": "spendi 30€ di cartoleria & riprendi 10€",
+        "brand": null,
+        "original_category": null,
+        "category_id": "altri",
+        "category_rule_id": "not-a-product",
+        "classification_level": "unclassified",
+        "classification_version": "1",
+        "tags": [],
+        "package": {
+          "raw_text": null,
+          "units_in_pack": null,
+          "quantity_per_unit": null,
+          "quantity_unit": null,
+          "total_quantity": null,
+          "quantity_basis": "unknown"
+        },
+        "price": null,
+        "benefit": {
+          "currency": "EUR",
+          "amount_cents": 1000,
+          "earning_minimum_spend_cents": 3000,
+          "redemption_minimum_spend_cents": 3000,
+          "earning_category": "Cartoleria",
+          "earning_validity": {
+            "timezone": "Europe/Rome",
+            "start_at": "2026-07-16T00:00:00+02:00",
+            "end_at_exclusive": "2026-09-20T22:00:00Z",
+            "raw_text": "Dal 16 luglio al 20 settembre 2026",
+            "evidence_level": "explicit_dates"
+          },
+          "redemption_validity": {
+            "timezone": "Europe/Rome",
+            "start_at": null,
+            "end_at_exclusive": "2026-10-07T22:00:00Z",
+            "raw_text": "Entro il 7 ottobre 2026; inizio utilizzo non specificato",
+            "evidence_level": "explicit_dates"
+          },
+          "maximum_vouchers_per_receipt": 3,
+          "maximum_discount_cents": 3000,
+          "exclusions": "Sono inclusi i prodotti in promozione. Il buono non è cumulabile con buoni di diversa tipologia e altre iniziative promozionali. Il buono non è utilizzabile per l’acquisto di: latte infanzia tipo 1, farmaci, medicinali omeopatici e veterinari, libri, riviste, libri di testo, quotidiani, pagamento utenze, carte regalo Coop, gift card e gift box, biglietti TicketOne e Vivaticket, visite ed esami specialistici, riparazioni e spese post acquisto, consegna a domicilio, contributi versati per le collection, spese su EasyCoop, prodotti della Gioielleria e calzature Rizzo, ricariche telefoniche, prodotti assicurativi, prodotti Buon fine, shopper.",
+          "redemption_instructions": "Buono cartaceo: scansiona il codice a barre in cassa. Per i soci è disponibile anche nell’area coupon; se usi il buono digitale devi attivarlo prima della spesa. Chi rinuncia allo scontrino cartaceo o paga nell’app Salvatempo riceve il buono nell’area coupon. Ogni buono è utilizzabile una sola volta. SpesaRadar non attiva il buono.",
+          "raw_text": "Ogni 30 € di cartoleria dà un buono di 10 €. Per utilizzarlo: spesa minima 30 €. Massimo 3 buoni nello stesso scontrino, sconto massimo 30 €. Sono inclusi i prodotti in promozione. Il buono non è cumulabile con buoni di diversa tipologia e altre iniziative promozionali. Il buono non è utilizzabile per l’acquisto di: latte infanzia tipo 1, farmaci, medicinali omeopatici e veterinari, libri, riviste, libri di testo, quotidiani, pagamento utenze, carte regalo Coop, gift card e gift box, biglietti TicketOne e Vivaticket, visite ed esami specialistici, riparazioni e spese post acquisto, consegna a domicilio, contributi versati per le collection, spese su EasyCoop, prodotti della Gioielleria e calzature Rizzo, ricariche telefoniche, prodotti assicurativi, prodotti Buon fine, shopper."
+        },
+        "conditions": {
+          "status": "complete",
+          "loyalty_required": false,
+          "app_activation_required": false,
+          "minimum_pack_count": null,
+          "minimum_spend_cents": 3000,
+          "minimum_cost_cents": null,
+          "raw_text": "Ogni 30 € di cartoleria dà un buono di 10 €. Per utilizzarlo: spesa minima 30 €. Massimo 3 buoni nello stesso scontrino, sconto massimo 30 €. Sono inclusi i prodotti in promozione. Il buono non è cumulabile con buoni di diversa tipologia e altre iniziative promozionali. Il buono non è utilizzabile per l’acquisto di: latte infanzia tipo 1, farmaci, medicinali omeopatici e veterinari, libri, riviste, libri di testo, quotidiani, pagamento utenze, carte regalo Coop, gift card e gift box, biglietti TicketOne e Vivaticket, visite ed esami specialistici, riparazioni e spese post acquisto, consegna a domicilio, contributi versati per le collection, spese su EasyCoop, prodotti della Gioielleria e calzature Rizzo, ricariche telefoniche, prodotti assicurativi, prodotti Buon fine, shopper."
+        },
+        "validity": {
+          "timezone": "Europe/Rome",
+          "start_at": "2026-07-16T00:00:00+02:00",
+          "end_at_exclusive": "2026-10-07T22:00:00Z",
+          "raw_text": "Ottenimento: Dal 16 luglio al 20 settembre 2026. Utilizzo: Entro il 7 ottobre 2026; inizio utilizzo non specificato.",
+          "evidence_level": "explicit_dates"
+        },
+        "scope": {
+          "type": "store",
+          "label": "Ipercoop Il Borgogioioso · Carpi 41012 · Via dell’Industria, 31",
+          "applicability": "official_store_link"
+        },
+        "quality": "limited",
+        "limitations": [
+          "Solo questo buono pubblico; catalogo prodotti Coop non acquisito.",
+          "Iniziativa nei negozi in cui sono presenti i prodotti; disponibilità a scaffale non garantita.",
+          "La fonte non specifica una data iniziale di utilizzo del buono.",
+          "Dato verificato nel locale prima del blocco sul runner GitHub; i timestamp restano quelli originali. Esclusione automatica dal feed dopo 48 ore senza verifica."
+        ],
+        "source_url": "https://www.coopalleanza3-0.it/volantino/promozione/featured/3967-ipercoop-il-borgogioioso/spendi-riprendi-scuola.html",
+        "image_url": null,
+        "evidence": {
+          "url": "https://www.coopalleanza3-0.it/volantino/promozione/featured/3967-ipercoop-il-borgogioioso/spendi-riprendi-scuola.html",
+          "selector": ".content-title.black .promotion-content",
+          "raw_price": null
+        },
+        "parser_version": "1",
+        "first_seen_at": "2026-09-08T10:24:37.335767Z",
+        "last_seen_at": "2026-09-08T10:24:37.335767Z",
+        "last_verified_at": "2026-09-08T10:24:37.335767Z",
+        "published_at": null
+      },
+      "withdrawn": false,
+      "missing_count": 0,
+      "last_missing_at": null
+    }
+  ]
+}
